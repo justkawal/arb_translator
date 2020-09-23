@@ -108,7 +108,7 @@ ArgParser _initiateParse() {
         help:
             'source_arb file acts as main file to translate to other [language_codes] provided.')
     ..addOption('output_directory',
-        defaultsTo: 'directory from where source_arb file was read')
+        help: 'directory from where source_arb file was read')
     ..addMultiOption('language_codes', defaultsTo: ['en', 'zh'])
     ..addOption('api_key', help: 'path to api_key must be provided')
     ..addOption('output_file_name',
