@@ -65,7 +65,7 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/directory/
 ```
 
-### Don't like the name ```arb_translator....blah..blah..blah.arb``` ??
+### Don't like the name ```arb_translator_..blah..blah..blah.arb``` ??
 * use ```--output_file_name``` with the single file name so that the output file name will be changed.
 * from the below code the output file will be of the name justkawal_{language code}.arb
 * Remember that we will automatically concate the language code of the respective files
@@ -77,3 +77,8 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 ### How to save api_key
 * Create a text file and then put the api key got from google cloud console in that file.
 * Now just simple call the file's path as the argument for --api_key
+
+### Having trouble using api key for translation ?
+* Enable Cloud Translation API inside APIS and Services section in google cloud console.
+* Some quota of google Cloud translation APIS are free for translating upto a limit
+* [Check Pricing and quota here](https://cloud.google.com/translate/pricing)
