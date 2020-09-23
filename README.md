@@ -77,5 +77,3 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 ### How to save api_key
 * Create a text file and then put the api key got from google cloud console in that file.
 * Now just simple call the file's path as the argument for --api_key
-
-## Scared to use api_key!!, Don't worry we don't need your api_key as we don't focus on such things. Our code is clean, short and straight forward
