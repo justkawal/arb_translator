@@ -17,11 +17,9 @@ void main(List<String> args) {
   var apiKeyFilePath = result['api_key'];
 
   if (sourceArb == null || apiKeyFilePath == null) {
-    print(
-        '--source_arb are mush to be needed && --api_key are must to be needed');
-    print('\nUsage: pub run arb_translator:translate [options]\n');
-    print(parser.usage);
-    exit(0);
+    print('--source_arb & --api_key are required.');
+    _printUsage(parser);
+    exit(2);
   }
 
   var sourceArbFile = result['source_arb'];
@@ -31,13 +29,15 @@ void main(List<String> args) {
   [file, apiKeyFile].forEach((element) {
     if (!element.existsSync()) {
       print('$element not found on path ${element.path}');
-      exit(0);
+      exit(2);
     }
   });
 
   var apiKey = apiKeyFile.readAsStringSync();
+  print(file.path);
 
-  var outputDirectory = result['output_directory'];
+  var outputDirectory = result['output_directory'] ??
+      file.path.substring(0, file.path.lastIndexOf('/') + 1);
   List<String> languageCodes = result['language_codes'];
 
   // read source file contents
@@ -61,13 +61,18 @@ void main(List<String> args) {
       for (var i = 0; i < value[0].length; i++) {
         translatedMap[keys[i]] = value[0][i];
       }
-      File(path.join(outputDirectory, outputFileName + '_$code.arb'))
+      File(path.join(outputDirectory, outputFileName + '$code.arb'))
           .create(recursive: true)
           .then((File file) {
         file.writeAsStringSync(encoder.convert(translatedMap));
       });
     });
   }
+}
+
+void _printUsage(parser) {
+  print('\nUsage: pub run arb_translator:translate [options]\n');
+  print(parser.usage);
 }
 
 Future<List<String>> _translateNow(
@@ -98,14 +103,16 @@ Future<List<String>> _translateNow(
 ArgParser _initiateParse() {
   var parser = ArgParser();
   parser
+    ..addFlag('help', hide: true, abbr: 'h')
     ..addOption('source_arb',
         help:
             'source_arb file acts as main file to translate to other [language_codes] provided.')
-    ..addOption('output_directory', defaultsTo: './')
-    ..addMultiOption('language_codes', defaultsTo: ['en'])
+    ..addOption('output_directory',
+        defaultsTo: 'directory from where source_arb file was read')
+    ..addMultiOption('language_codes', defaultsTo: ['en', 'zh'])
     ..addOption('api_key', help: 'path to api_key must be provided')
     ..addOption('output_file_name',
-        defaultsTo: 'arb_translator_translated',
+        defaultsTo: 'arb_translator_',
         help:
             'output_file_name is the file name used to concate before language codes');
   return parser;

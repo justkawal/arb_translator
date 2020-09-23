@@ -1,3 +1,6 @@
-## 1.0.0
+# Changelog
+All notable changes to this project will be documented in this file.
 
-- Initial version, created by Stagehand
+## [1.0.0] - 2020-09-24
+### Feature
+- Library Published
