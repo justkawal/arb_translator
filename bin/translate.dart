@@ -54,12 +54,24 @@ void main(List<String> args) {
   var outputFileName = result['output_file_name'];
 
   for (var code in uniqueLanguageCodes) {
-    Future.wait([
-      _translateNow(values, <String, dynamic>{'target': code, 'key': apiKey})
-    ]).then((value) {
+    var list = <List<String>>[];
+    var k = 128;
+    while (k < values.length) {
+      list.add(values.sublist(k - 128, k));
+      k += 128;
+    }
+    list.add(values.sublist(k - 128));
+
+    Future.wait(list.map((l) =>
+            _translateNow(l, <String, dynamic>{'target': code, 'key': apiKey})))
+        .then((value) {
       var translatedMap = <String, String>{};
-      for (var i = 0; i < value[0].length; i++) {
-        translatedMap[keys[i]] = value[0][i];
+      var index = 0;
+      for (var j = 0; j < value.length; j++) {
+        for (var i = 0; i < value[j].length; i++) {
+          translatedMap[keys[index]] = value[j][i];
+          index++;
+        }
       }
       File(path.join(outputDirectory, outputFileName + '$code.arb'))
           .create(recursive: true)
