@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2020-09-25
+### Issue solved
+- Fixed too many segments issue
+
 ## [1.0.0] - 2020-09-24
 ### Feature
 - Library Published
