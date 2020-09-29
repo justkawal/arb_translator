@@ -52,8 +52,11 @@ void main(List<String> args) {
   var values = data.entries.map((e) => e.value.toString()).toList();
 
   var outputFileName = result['output_file_name'];
+  print(
+      '  ════════════════════════════════════════════\n            arb translator (v1.0.2)\n  ════════════════════════════════════════════\n');
 
   for (var code in uniqueLanguageCodes) {
+    print('• Processing for $code');
     var list = <List<String>>[];
     var k = 128;
     while (k < values.length) {
@@ -80,6 +83,7 @@ void main(List<String> args) {
       });
     });
   }
+  print('✓ Transalations created');
 }
 
 void _printUsage(parser) {
