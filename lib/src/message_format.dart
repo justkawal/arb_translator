@@ -1,41 +1,46 @@
 enum ElementType { literal, argument, plural, gender, select }
 
 class BaseElement {
-  ElementType type;
-  String value;
+  final ElementType type;
 
-  BaseElement(this.type, this.value);
+  final String value;
+
+  const BaseElement(this.type, this.value);
 }
 
 class Option {
-  String name;
-  List<BaseElement> value;
+  final String name;
 
-  Option(this.name, this.value);
+  final List<BaseElement> value;
+
+  const Option(this.name, this.value);
 }
 
 class LiteralElement extends BaseElement {
-  LiteralElement(String value) : super(ElementType.literal, value);
+  const LiteralElement(String value) : super(ElementType.literal, value);
 }
 
 class ArgumentElement extends BaseElement {
-  ArgumentElement(String value) : super(ElementType.argument, value);
+  const ArgumentElement(String value) : super(ElementType.argument, value);
 }
 
 class GenderElement extends BaseElement {
-  List<Option> options;
+  final List<Option> options;
 
-  GenderElement(String value, this.options) : super(ElementType.gender, value);
+  const GenderElement(String value, this.options)
+      : super(ElementType.gender, value);
 }
 
 class PluralElement extends BaseElement {
-  List<Option> options;
+  final List<Option> options;
 
-  PluralElement(String value, this.options) : super(ElementType.plural, value);
+  const PluralElement(String value, this.options)
+      : super(ElementType.plural, value);
 }
 
 class SelectElement extends BaseElement {
-  List<Option> options;
+  final List<Option> options;
 
-  SelectElement(String value, this.options) : super(ElementType.select, value);
+  const SelectElement(String value, this.options)
+      : super(ElementType.select, value);
 }

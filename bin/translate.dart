@@ -84,6 +84,8 @@ void main(List<String> args) async {
   for (final code in languageCodes) {
     console.writeLine('• Processing for $code');
 
+    // This logic needs to be simplified.
+    // We create a
     const maxWords = 128;
     var newArbDocument = arbDocument.copyWith(locale: code);
     final wordLists = <List<String>>[];
@@ -108,7 +110,7 @@ void main(List<String> args) async {
       wordList.add(resource.value.text);
       callbackList.add(
         (String value) {
-          return resource.copyWith(value: ArbResourceValue.fromText(value));
+          return resource.copyWith(value: ArbResourceValue.empty(value));
         },
       );
 
@@ -139,14 +141,19 @@ void main(List<String> args) async {
       }
     }
 
-    final translateResults = await Future.wait(
-      wordLists.map((wordList) {
-        return _translateNow(
-          translateList: wordList,
-          parameters: <String, dynamic>{'target': code, 'key': apiKey},
-        );
-      }),
-    );
+    // FIXME: This is wrong as it might add it twice
+    resourceIdsLists.add(resourceIdList);
+    wordLists.add(wordList);
+    callbackLists.add(callbackList);
+
+    final futuresList = wordLists.map((_wordList) {
+      return _translateNow(
+        translateList: _wordList,
+        parameters: <String, dynamic>{'target': code, 'key': apiKey},
+      );
+    }).toList();
+
+    final translateResults = await Future.wait(futuresList);
 
     for (var i = 0; i < translateResults.length; i++) {
       final translateList = translateResults[i];
@@ -154,16 +161,18 @@ void main(List<String> args) async {
       final resourceIdsList = resourceIdsLists[i];
 
       for (var j = 0; j < translateList.length; j++) {
-        final translatedWord = translateList[i];
-        final callback = callbackList[i];
-        final resourceId = resourceIdsList[i];
+        final translatedWord = translateList[j];
+        final callback = callbackList[j];
+        final resourceId = resourceIdsList[j];
 
         newArbDocument = newArbDocument.copyWith(
           resources: newArbDocument.resources
             ..update(
               resourceId,
               (_) {
-                return callback(translatedWord);
+                final arbResource = callback(translatedWord);
+
+                return arbResource;
               },
             ),
         );
@@ -186,7 +195,7 @@ Future<List<String>> _translateNow({
   required List<String> translateList,
   required Map<String, dynamic> parameters,
 }) async {
-  final translated = List<String>.from(translateList);
+  final translated = <String>[];
 
   parameters['q'] = translateList;
 
@@ -202,7 +211,9 @@ Future<List<String>> _translateNow({
     // TODO: We should use `googleapis` to deserialize this
     final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
 
-    final tr = jsonData['data']['translations'] as List<Map<String, dynamic>>;
+    final tr = List<Map<String, dynamic>>.from(
+      jsonData['data']['translations'] as Iterable,
+    );
 
     if (tr.isNotEmpty) {
       for (final i in tr) {
@@ -233,3 +244,5 @@ ArgParser _initiateParse() {
 
   return parser;
 }
+
+// Translate LiteralElement

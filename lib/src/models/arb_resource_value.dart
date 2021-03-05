@@ -13,6 +13,10 @@ class ArbResourceValue {
 
   // bool get hasPlaceholders => placeholders.isNotEmpty;
 
+  factory ArbResourceValue.empty(String text) {
+    return ArbResourceValue(text: text, elements: const []);
+  }
+
   factory ArbResourceValue.fromText(String text) {
     final parseResult = IcuParser().parse(text);
 

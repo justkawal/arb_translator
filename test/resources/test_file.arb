@@ -5,7 +5,7 @@
   "@pageLoginUsername": {},
   "pageLoginPassword": "Your password",
   "@pageLoginPassword": {},
-  "pageHomeTitle": "Welcome {firstName}",
+  "pageHomeTitle": "Welcome {firstName}!",
   "@pageHomeTitle": {
     "description": "Welcome message on the Home screen",
     "placeholders": {

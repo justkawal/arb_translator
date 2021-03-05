@@ -1,34 +1,34 @@
 {
   "@@locale": "zh",
   "appName": "Demo app",
-  "pageLoginUsername": "Your username",
+  "pageLoginUsername": "您的用户名",
   "@pageLoginUsername": {},
-  "pageLoginPassword": "Your password",
+  "pageLoginPassword": "你的密码",
   "@pageLoginPassword": {},
-  "pageHomeTitle": "Welcome {firstName}",
+  "pageHomeTitle": "Welcome {firstName}!",
   "@pageHomeTitle": {
-    "description": "Welcome message on the Home screen",
+    "description": "主屏幕上的欢迎消息",
     "placeholders": {
       "firstName": {}
     }
   },
   "pageHomeInboxCount": "{count, plural, zero{You have no new messages} one{You have 1 new message} other{You have {count} new messages}}",
   "@pageHomeInboxCount": {
-    "description": "New messages count on the Home screen",
+    "description": "新消息在主屏幕上计数",
     "placeholders": {
       "count": {}
     }
   },
   "pageHomeBirthday": "{sex, select, male{His birthday} female{Her birthday} other{Their birthday}}",
   "@pageHomeBirthday": {
-    "description": "Birthday message on the Home screen",
+    "description": "主屏幕上的生日消息",
     "placeholders": {
       "sex": {}
     }
   },
   "commonVehicleType": "{vehicleType, select, sedan{Sedan} cabriolet{Solid roof cabriolet} truck{16 wheel truck} other{Other}}",
   "@commonVehicleType": {
-    "description": "Vehicle type",
+    "description": "车辆类型",
     "placeholders": {
       "vehicleType": {}
     }
