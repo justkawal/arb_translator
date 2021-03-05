@@ -10,6 +10,7 @@ import 'package:args/args.dart';
 import 'package:dart_console/dart_console.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
+import 'package:yaml/yaml.dart';
 
 final encoder = JsonEncoder.withIndent('  ');
 final decoder = JsonDecoder();
@@ -23,6 +24,9 @@ const _outputFileName = 'output_file_name';
 typedef UpdateDocument<T, R> = T Function(R text);
 
 void main(List<String> args) async {
+  final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
+  final name = yaml['name'] as String;
+  final version = yaml['version'] as String;
   final console = Console();
 
   final parser = _initiateParse();
@@ -32,9 +36,6 @@ void main(List<String> args) async {
     print(parser.usage);
     exit(0);
   }
-
-  final current = Directory.current;
-  print(current);
 
   if (!result.wasParsed(_sourceArb)) {
     console.writeErrorLine('--source_arb is required.');
@@ -59,7 +60,6 @@ void main(List<String> args) async {
   final src = arbFile.readAsStringSync();
   final arbDocument = ArbDocument.decode(src);
 
-  // TODO: Comment what this does
   outputDirectory ??=
       arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
 
@@ -70,14 +70,16 @@ void main(List<String> args) async {
     }
   });
 
-  if (languageCodes.toSet().length == languageCodes.length) {
+  if (languageCodes.toSet().length != languageCodes.length) {
     console.writeErrorLine('Please remove language code duplicates');
     exit(2);
   }
 
   final width = console.windowWidth;
   // TODO: padRight this and have it the center or whatever
-  console.writeLine('-' * width);
+  final halfLength = ((width - name.length - version.length - 5) / 2).floor();
+
+  console.writeLine('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
 
   for (final code in languageCodes) {
     console.writeLine('• Processing for $code');
@@ -197,7 +199,7 @@ Future<List<String>> _translateNow({
   if (data.statusCode != 200) {
     throw http.ClientException('Error ${data.statusCode}: ${data.body}', url);
   } else {
-    // TODO: We should use google api to decode this
+    // TODO: We should use `googleapis` to deserialize this
     final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
 
     final tr = jsonData['data']['translations'] as List<Map<String, dynamic>>;
@@ -222,7 +224,7 @@ ArgParser _initiateParse() {
             'source_arb file acts as main file to translate to other [language_codes] provided.')
     ..addOption(_outputDirectory,
         help: 'directory from where source_arb file was read')
-    ..addMultiOption(_languageCodes, defaultsTo: ['en', 'zh'])
+    ..addMultiOption(_languageCodes, defaultsTo: ['zh'])
     ..addOption(_apiKey, help: 'path to api_key must be provided')
     ..addOption(_outputFileName,
         defaultsTo: 'arb_translator_',

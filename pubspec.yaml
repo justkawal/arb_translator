@@ -16,3 +16,4 @@ dependencies:
 
 dev_dependencies:
   pedantic: ^1.11.0
+  

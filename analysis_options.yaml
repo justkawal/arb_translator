@@ -17,3 +17,4 @@ analyzer:
   # TODO: This shouldn't be excluded but the types on parsers are hard for me
   exclude:
     - "**/*_parser.dart"
+    
