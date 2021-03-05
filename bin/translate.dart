@@ -3,6 +3,7 @@ library translate;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:arb_translator/src/message_format.dart';
 import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
 import 'package:arb_translator/src/models/arb_resource_value.dart';
@@ -21,7 +22,22 @@ const _outputDirectory = 'output_directory';
 const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
-typedef UpdateDocument<T, R> = T Function(R text);
+class Action {
+  final ArbResource Function(String text) updateFunction;
+
+  final String text;
+
+  final String resourceId;
+
+  final int? index;
+
+  const Action({
+    required this.updateFunction,
+    required this.resourceId,
+    required this.text,
+    required this.index,
+  });
+}
 
 void main(List<String> args) async {
   final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
@@ -84,71 +100,67 @@ void main(List<String> args) async {
   for (final code in languageCodes) {
     console.writeLine('• Processing for $code');
 
-    // This logic needs to be simplified.
-    // We create a
     const maxWords = 128;
     var newArbDocument = arbDocument.copyWith(locale: code);
-    final wordLists = <List<String>>[];
-    final callbackLists = <List<UpdateDocument<ArbResource, String>>>[];
-    final resourceIdsLists = <List<String>>[];
-
-    final wordList = <String>[];
-    final callbackList = <UpdateDocument<ArbResource, String>>[];
-    final resourceIdList = <String>[];
+    final actionLists = <List<Action>>[];
+    final actionList = <Action>[];
 
     for (final resource in arbDocument.resources.values) {
-      if (wordList.length > maxWords) {
-        resourceIdsLists.add(resourceIdList);
-        wordLists.add(wordList);
-        callbackLists.add(callbackList);
-        resourceIdList.clear();
-        wordList.clear();
-        callbackList.clear();
-      }
+      final elements = resource.value.elements;
 
-      resourceIdList.add(resource.id);
-      wordList.add(resource.value.text);
-      callbackList.add(
-        (String value) {
-          return resource.copyWith(value: ArbResourceValue.empty(value));
-        },
-      );
+      for (var i = 0; i < elements.length; i++) {
+        final element = elements[i];
+
+        if (element is LiteralElement) {
+          if (actionList.length > maxWords) {
+            actionLists.add(actionList);
+            actionList.clear();
+          }
+
+          actionList.add(
+            Action(
+              text: resource.value.text,
+              resourceId: resource.id,
+              index: i,
+              updateFunction: (String value) {
+                return resource.copyWith(value: ArbResourceValue.empty(value));
+              },
+            ),
+          );
+        }
+      }
 
       final _description = resource.attributes?.description;
 
       if (_description != null) {
-        // TODO: Duplicated code
-        if (wordList.length > maxWords) {
-          resourceIdsLists.add(resourceIdList);
-          wordLists.add(wordList);
-          callbackLists.add(callbackList);
-          resourceIdList.clear();
-          wordList.clear();
-          callbackList.clear();
+        if (actionList.length > maxWords) {
+          actionLists.add(actionList);
+          actionList.clear();
         }
 
-        resourceIdList.add(resource.id);
-        wordList.add(_description);
-        callbackList.add(
-          (String value) {
-            return resource.copyWith(
-              attributes: resource.attributes!.copyWith(
-                description: value,
-              ),
-            );
-          },
+        actionList.add(
+          Action(
+            text: _description,
+            resourceId: resource.id,
+            index: null,
+            updateFunction: (String value) {
+              return resource.copyWith(
+                attributes: resource.attributes!.copyWith(
+                  description: value,
+                ),
+              );
+            },
+          ),
         );
       }
     }
 
     // FIXME: This is wrong as it might add it twice
-    resourceIdsLists.add(resourceIdList);
-    wordLists.add(wordList);
-    callbackLists.add(callbackList);
+    actionLists.add(actionList);
 
-    final futuresList = wordLists.map((_wordList) {
+    final futuresList = actionLists.map((actionList) {
       return _translateNow(
-        translateList: _wordList,
+        translateList: actionList.map((action) => action.text).toList(),
         parameters: <String, dynamic>{'target': code, 'key': apiKey},
       );
     }).toList();
@@ -157,22 +169,27 @@ void main(List<String> args) async {
 
     for (var i = 0; i < translateResults.length; i++) {
       final translateList = translateResults[i];
-      final callbackList = callbackLists[i];
-      final resourceIdsList = resourceIdsLists[i];
+      final actionList = actionLists[i];
 
       for (var j = 0; j < translateList.length; j++) {
         final translatedWord = translateList[j];
-        final callback = callbackList[j];
-        final resourceId = resourceIdsList[j];
+        final action = actionList[j];
 
         newArbDocument = newArbDocument.copyWith(
           resources: newArbDocument.resources
             ..update(
-              resourceId,
+              action.resourceId,
               (_) {
-                final arbResource = callback(translatedWord);
+                if (action.index != null) {
+                  // FIXME: This is not right
+                  final arbResource = action.updateFunction(translatedWord);
 
-                return arbResource;
+                  return arbResource;
+                } else {
+                  final arbResource = action.updateFunction(translatedWord);
+
+                  return arbResource;
+                }
               },
             ),
         );
@@ -244,5 +261,3 @@ ArgParser _initiateParse() {
 
   return parser;
 }
-
-// Translate LiteralElement
