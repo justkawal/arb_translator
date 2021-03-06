@@ -6,6 +6,11 @@ class BaseElement {
   final String value;
 
   const BaseElement(this.type, this.value);
+
+  @override
+  String toString() {
+    return '{$value}';
+  }
 }
 
 class Option {
@@ -14,6 +19,11 @@ class Option {
   final List<BaseElement> value;
 
   const Option(this.name, this.value);
+
+  @override
+  String toString() {
+    return '{$value}';
+  }
 }
 
 class LiteralElement extends BaseElement {
@@ -22,6 +32,11 @@ class LiteralElement extends BaseElement {
 
 class ArgumentElement extends BaseElement {
   const ArgumentElement(String value) : super(ElementType.argument, value);
+
+  @override
+  String toString() {
+    return '{$value}';
+  }
 }
 
 class GenderElement extends BaseElement {
@@ -29,6 +44,11 @@ class GenderElement extends BaseElement {
 
   const GenderElement(String value, this.options)
       : super(ElementType.gender, value);
+
+  @override
+  String toString() {
+    return '{$value, select, ${options.join(' ')}}';
+  }
 }
 
 class PluralElement extends BaseElement {
@@ -36,6 +56,11 @@ class PluralElement extends BaseElement {
 
   const PluralElement(String value, this.options)
       : super(ElementType.plural, value);
+
+  @override
+  String toString() {
+    return '{$value, plural, ${options.join(' ')}}';
+  }
 }
 
 class SelectElement extends BaseElement {

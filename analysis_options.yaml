@@ -11,10 +11,10 @@ linter:
     - parameter_assignments
 
 analyzer:
-  strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
+  # strong-mode:
+  #   implicit-casts: false
+  #   implicit-dynamic: false
   # TODO: This shouldn't be excluded but the types on parsers are hard for me
-  exclude:
-    - "**/*_parser.dart"
+  # exclude:
+  #   - "**/*_parser.dart"
     

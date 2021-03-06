@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:arb_translator/src/message_format.dart';
 import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
-import 'package:arb_translator/src/models/arb_resource_value.dart';
 import 'package:args/args.dart';
 import 'package:dart_console/dart_console.dart';
 import 'package:http/http.dart' as http;
@@ -123,7 +122,16 @@ void main(List<String> args) async {
               resourceId: resource.id,
               index: i,
               updateFunction: (String value) {
-                return resource.copyWith(value: ArbResourceValue.empty(value));
+                return resource.copyWith(
+                  value: resource.value.copyWith(
+                    elements: resource.value.elements
+                      ..replaceRange(
+                        i,
+                        i + 1,
+                        [LiteralElement(value)],
+                      ),
+                  ),
+                );
               },
             ),
           );

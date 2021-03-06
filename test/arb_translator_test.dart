@@ -81,8 +81,10 @@ void main() {
         });
 
         test('has non empty text', () {
+          final text = pageHomeResource.value.value.text;
+
           expect(
-            pageHomeResource.value.value.text,
+            text,
             isNotEmpty,
           );
         });

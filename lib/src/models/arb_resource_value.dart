@@ -2,20 +2,12 @@ import 'package:arb_translator/src/icu_parser.dart';
 import 'package:arb_translator/src/message_format.dart';
 
 class ArbResourceValue {
-  final String text;
+  // TODO: This should be a getter based off elements
+  String get text => elements.map((element) => element.value).join();
 
   final List<BaseElement> elements;
 
-  const ArbResourceValue({
-    required this.text,
-    required this.elements,
-  });
-
-  // bool get hasPlaceholders => placeholders.isNotEmpty;
-
-  factory ArbResourceValue.empty(String text) {
-    return ArbResourceValue(text: text, elements: const []);
-  }
+  const ArbResourceValue({required this.elements});
 
   factory ArbResourceValue.fromText(String text) {
     final parseResult = IcuParser().parse(text);
@@ -24,16 +16,10 @@ class ArbResourceValue {
       throw parseResult.message;
     }
 
-    return ArbResourceValue(text: text, elements: parseResult.value);
+    return ArbResourceValue(elements: parseResult.value);
   }
 
-  ArbResourceValue copyWith({
-    String? text,
-    List<BaseElement>? elements,
-  }) {
-    return ArbResourceValue(
-      text: text ?? this.text,
-      elements: elements ?? this.elements,
-    );
+  ArbResourceValue copyWith({List<BaseElement>? elements}) {
+    return ArbResourceValue(elements: elements ?? this.elements);
   }
 }

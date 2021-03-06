@@ -9,7 +9,7 @@ T enumFromString<T>(List<T> values, String value) {
 class ArbAttributes {
   final String? description;
 
-  final ResourceType? type;
+  final ResourceType? resourceType;
 
   // TODO: Have a better data structure for these values
   final Map<String, Map<String, dynamic>>? placeholders;
@@ -17,7 +17,7 @@ class ArbAttributes {
   const ArbAttributes({
     required this.description,
     required this.placeholders,
-    required this.type,
+    required this.resourceType,
   });
 
   bool get isEmpty => description == null && placeholders == null;
@@ -29,7 +29,7 @@ class ArbAttributes {
 
     return ArbAttributes(
       description: json['description'] as String?,
-      type: resourceType == null
+      resourceType: resourceType == null
           ? null
           : enumFromString(ResourceType.values, resourceType),
       placeholders: json['placeholders'] == null
@@ -49,12 +49,12 @@ class ArbAttributes {
 
   ArbAttributes copyWith({
     String? description,
-    ResourceType? type,
+    ResourceType? resourceType,
     Map<String, Map<String, dynamic>>? placeholders,
   }) {
     return ArbAttributes(
       description: description ?? this.description,
-      type: type ?? this.type,
+      resourceType: resourceType ?? this.resourceType,
       placeholders: placeholders ?? this.placeholders,
     );
   }
