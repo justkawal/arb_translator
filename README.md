@@ -28,6 +28,8 @@
   <br>
  
  [arb_translator](https://www.pub.dev/packages/arb_translator) is a dart command-line tool for translating arb file into multiple languages.
+ 
+#### This library is MIT licensed So, it's free to use anytime, anywhere without any consent, because we believe in Open Source work.
 
 # Lets Get Started
 
