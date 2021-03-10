@@ -80,23 +80,23 @@ void main() {
           );
         });
 
-        test('has non empty text', () {
-          final text = pageHomeResource.value.value.text;
+        // test('has non empty text', () {
+        //   final text = pageHomeResource.value.value;
 
-          expect(
-            text,
-            isNotEmpty,
-          );
-        });
+        //   expect(
+        //     text,
+        //     isNotEmpty,
+        //   );
+        // });
 
-        test('has non empty elements', () {
-          final elements = pageHomeResource.value.value.elements;
+        // test('has non empty elements', () {
+        //   final elements = pageHomeResource.value.value.element;
 
-          expect(
-            elements.length,
-            equals(1),
-          );
-        });
+        //   expect(
+        //     elements.length,
+        //     equals(1),
+        //   );
+        // });
 
         test('has non empty attributes placeholders', () {
           expect(

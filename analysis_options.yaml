@@ -10,11 +10,11 @@ linter:
     - camel_case_types
     - parameter_assignments
 
-analyzer:
-  # strong-mode:
-  #   implicit-casts: false
-  #   implicit-dynamic: false
-  # TODO: This shouldn't be excluded but the types on parsers are hard for me
+# analyzer:
+#   strong-mode:
+#     implicit-casts: false
+#     implicit-dynamic: false
+  # This shouldn't be excluded but the types on parsers are very hard
   # exclude:
   #   - "**/*_parser.dart"
     

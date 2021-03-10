@@ -1,10 +1,6 @@
-enum ResourceType {
-  type,
-}
+import '../utils.dart';
 
-T enumFromString<T>(List<T> values, String value) {
-  return values.firstWhere((v) => v.toString().split('.')[1] == value);
-}
+enum ResourceType { type }
 
 class ArbAttributes {
   final String? description;

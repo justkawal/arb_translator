@@ -3,7 +3,6 @@ library translate;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:arb_translator/src/message_format.dart';
 import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
 import 'package:args/args.dart';
@@ -91,7 +90,6 @@ void main(List<String> args) async {
   }
 
   final width = console.windowWidth;
-  // TODO: padRight this and have it the center or whatever
   final halfLength = ((width - name.length - version.length - 5) / 2).floor();
 
   console.writeLine('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
@@ -105,62 +103,52 @@ void main(List<String> args) async {
     final actionList = <Action>[];
 
     for (final resource in arbDocument.resources.values) {
-      final elements = resource.value.elements;
+      final element = resource.element;
 
-      for (var i = 0; i < elements.length; i++) {
-        final element = elements[i];
+      // if (element is OptionElement) {
+      //   for (final option in element.options) {
+      //     actionList.add(
+      //       Action(
+      //         text: option.text,
+      //         resourceId: resource.id,
+      //         index: i,
+      //         updateFunction: (String value) {
+      //           return resource.copyWith(
+      //             element: Sentence(elements),
+      //           );
+      //         },
+      //       ),
+      //     );
+      //   }
+      // } else if (element is Sentence) {
+      //   actionList.add(
+      //     Action(
+      //       text: element.value,
+      //       resourceId: resource.id,
+      //       index: i,
+      //       updateFunction: (String value) {
+      //         return resource.copyWith(
+      //           element: Sentence(elements),
+      //         );
+      //       },
+      //     ),
+      //   );
+      // } else {
+      //   throw UnsupportedError('Unsupported resource element $element');
+      // }
+      // final elements = resource.value.;
 
-        if (element is LiteralElement) {
-          if (actionList.length > maxWords) {
-            actionLists.add(actionList);
-            actionList.clear();
-          }
+      // for (var i = 0; i < elements.length; i++) {
+      //   final element = elements[i];
 
-          actionList.add(
-            Action(
-              text: resource.value.text,
-              resourceId: resource.id,
-              index: i,
-              updateFunction: (String value) {
-                return resource.copyWith(
-                  value: resource.value.copyWith(
-                    elements: resource.value.elements
-                      ..replaceRange(
-                        i,
-                        i + 1,
-                        [LiteralElement(value)],
-                      ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
-      }
+      //   if (element is LiteralElement) {
+      //     if (actionList.length > maxWords) {
+      //       actionLists.add(actionList);
+      //       actionList.clear();
+      //     }
+      //   }
+      // }
 
-      final _description = resource.attributes?.description;
-
-      if (_description != null) {
-        if (actionList.length > maxWords) {
-          actionLists.add(actionList);
-          actionList.clear();
-        }
-
-        actionList.add(
-          Action(
-            text: _description,
-            resourceId: resource.id,
-            index: null,
-            updateFunction: (String value) {
-              return resource.copyWith(
-                attributes: resource.attributes!.copyWith(
-                  description: value,
-                ),
-              );
-            },
-          ),
-        );
-      }
     }
 
     // FIXME: This is wrong as it might add it twice

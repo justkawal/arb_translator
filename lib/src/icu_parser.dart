@@ -30,7 +30,10 @@
 
 import 'package:petitparser/petitparser.dart';
 
-import 'message_format.dart';
+import 'models/base_element.dart';
+import 'models/option.dart';
+import 'models/option_element.dart';
+import 'models/sentence.dart';
 
 class IcuParser {
   Parser<String> get openCurly => char('{');
@@ -131,19 +134,28 @@ class IcuParser {
 
   Parser get contents => pluralOrGenderOrSelect | parameter | messageText;
 
-  Parser get simpleText => (nonIcuMessageText | parameter | openCurly).plus();
+  Parser get simpleText => (nonIcuMessageText | parameter | openCurly)
+          .plus()
+          .callCC((continuation, context) {
+        print('hello');
+        final result = continuation(context);
+        return result;
+      });
 
   Parser<LiteralElement> get empty => epsilon().map((_) => LiteralElement(''));
 
   Parser<ArgumentElement> get parameter =>
       (openCurly & id & closeCurly).map((result) => ArgumentElement(result[1]));
 
-  Result<List<BaseElement>> parse(String message) {
-    final parsed = (pluralOrGenderOrSelect | simpleText | empty).map(
-      (result) {
-        final parseResult =
-            List<BaseElement>.from(result is List ? result : [result]);
-        return parseResult;
+  Result<BaseElement> parse(String message) {
+    final parsed =
+        (pluralOrGenderOrSelect | simpleText | empty).map<BaseElement>(
+      (dynamic result) {
+        if (result is List) {
+          return Sentence(List<SentenceElement>.from(result));
+        } else {
+          return result as OptionElement;
+        }
       },
     ).parse(message);
 

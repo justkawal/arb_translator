@@ -1,5 +1,7 @@
+import 'package:arb_translator/src/icu_parser.dart';
+
 import 'arb_attributes.dart';
-import 'arb_resource_value.dart';
+import 'base_element.dart';
 
 enum ArbResourceType { text }
 
@@ -8,14 +10,13 @@ class ArbResource {
 
   final String attributeId;
 
-  // TODO: I think I can remove this value thing
-  final ArbResourceValue value;
+  final BaseElement element;
 
   final ArbAttributes? attributes;
 
   const ArbResource._({
     required this.id,
-    required this.value,
+    required this.element,
     required this.attributes,
   }) : attributeId = '@$id';
 
@@ -25,9 +26,15 @@ class ArbResource {
   }) {
     final _arbAttributes = attributesEntry?.value as Map<String, dynamic>?;
 
+    final parseResult = IcuParser().parse(textEntry.value);
+
+    if (parseResult.isFailure) {
+      throw parseResult.message;
+    }
+
     return ArbResource._(
       id: textEntry.key,
-      value: ArbResourceValue.fromText(textEntry.value),
+      element: parseResult.value,
       attributes: _arbAttributes == null
           ? null
           : ArbAttributes.fromJson(_arbAttributes),
@@ -38,19 +45,19 @@ class ArbResource {
     final _attributes = attributes;
 
     return <String, dynamic>{
-      id: value.text,
+      // id: element.text,
       if (_attributes != null) attributeId: _attributes.toJson()
     };
   }
 
   ArbResource copyWith({
     String? id,
-    ArbResourceValue? value,
+    BaseElement? element,
     ArbAttributes? attributes,
   }) {
     return ArbResource._(
       id: id ?? this.id,
-      value: value ?? this.value,
+      element: element ?? this.element,
       attributes: attributes ?? this.attributes,
     );
   }
