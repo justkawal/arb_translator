@@ -22,7 +22,8 @@ const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
 class Action {
-  final ArbResource Function(String text, String currentText) updateFunction;
+  final ArbResource Function(String translation, String currentText)
+      updateFunction;
 
   final String text;
 
@@ -111,28 +112,33 @@ void main(List<String> args) async {
           Action(
             text: htmlSafe,
             resourceId: resource.id,
-            updateFunction: (String value, String currentText) {
+            updateFunction: (String translation, String currentText) {
               return resource.copyWith(
-                text: currentText.replaceRange(token.start, token.stop, value),
+                text: currentText.replaceRange(
+                  token.start,
+                  token.stop,
+                  translation,
+                ),
               );
             },
           ),
         );
 
-        if (actionList.length > maxWords) {
-          actionLists.add(actionList);
+        if (actionList.length >= maxWords) {
+          actionLists.add([...actionList]);
           actionList.clear();
         }
       }
     }
 
     if (actionList.isNotEmpty) {
-      actionLists.add(actionList);
+      actionLists.add([...actionList]);
+      actionList.clear();
     }
 
-    final futuresList = actionLists.map((actionList) {
+    final futuresList = actionLists.map((list) {
       return _translateNow(
-        translateList: actionList.map((action) => action.text).toList(),
+        translateList: list.map((action) => action.text).toList(),
         parameters: <String, dynamic>{'target': code, 'key': apiKey},
       );
     }).toList();
@@ -146,10 +152,10 @@ void main(List<String> args) async {
       final actionList = actionLists[i];
 
       for (var j = translateList.length - 1; j >= 0; j--) {
+        final action = actionList[j];
         final translation = translateList[j];
         final sanitizedTranslation =
             translation.contains('<') ? removeHtml(translation) : translation;
-        final action = actionList[j];
 
         newArbDocument = newArbDocument.copyWith(
           resources: newArbDocument.resources
