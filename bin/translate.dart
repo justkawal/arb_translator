@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
+import 'package:arb_translator/src/utils.dart';
 import 'package:args/args.dart';
 import 'package:dart_console/dart_console.dart';
 import 'package:http/http.dart' as http;
@@ -21,19 +22,16 @@ const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
 class Action {
-  final ArbResource Function(String text) updateFunction;
+  final ArbResource Function(String text, String currentText) updateFunction;
 
   final String text;
 
   final String resourceId;
 
-  final int? index;
-
   const Action({
     required this.updateFunction,
     required this.resourceId,
     required this.text,
-    required this.index,
   });
 }
 
@@ -103,56 +101,34 @@ void main(List<String> args) async {
     final actionList = <Action>[];
 
     for (final resource in arbDocument.resources.values) {
-      final element = resource.element;
+      final tokens = resource.tokens;
 
-      // if (element is OptionElement) {
-      //   for (final option in element.options) {
-      //     actionList.add(
-      //       Action(
-      //         text: option.text,
-      //         resourceId: resource.id,
-      //         index: i,
-      //         updateFunction: (String value) {
-      //           return resource.copyWith(
-      //             element: Sentence(elements),
-      //           );
-      //         },
-      //       ),
-      //     );
-      //   }
-      // } else if (element is Sentence) {
-      //   actionList.add(
-      //     Action(
-      //       text: element.value,
-      //       resourceId: resource.id,
-      //       index: i,
-      //       updateFunction: (String value) {
-      //         return resource.copyWith(
-      //           element: Sentence(elements),
-      //         );
-      //       },
-      //     ),
-      //   );
-      // } else {
-      //   throw UnsupportedError('Unsupported resource element $element');
-      // }
-      // final elements = resource.value.;
+      for (final token in tokens) {
+        final text = token.value as String;
+        final htmlSafe = text.contains('{') ? toHtml(text) : text;
 
-      // for (var i = 0; i < elements.length; i++) {
-      //   final element = elements[i];
+        actionList.add(
+          Action(
+            text: htmlSafe,
+            resourceId: resource.id,
+            updateFunction: (String value, String currentText) {
+              return resource.copyWith(
+                text: currentText.replaceRange(token.start, token.stop, value),
+              );
+            },
+          ),
+        );
 
-      //   if (element is LiteralElement) {
-      //     if (actionList.length > maxWords) {
-      //       actionLists.add(actionList);
-      //       actionList.clear();
-      //     }
-      //   }
-      // }
-
+        if (actionList.length > maxWords) {
+          actionLists.add(actionList);
+          actionList.clear();
+        }
+      }
     }
 
-    // FIXME: This is wrong as it might add it twice
-    actionLists.add(actionList);
+    if (actionList.isNotEmpty) {
+      actionLists.add(actionList);
+    }
 
     final futuresList = actionLists.map((actionList) {
       return _translateNow(
@@ -163,29 +139,29 @@ void main(List<String> args) async {
 
     final translateResults = await Future.wait(futuresList);
 
-    for (var i = 0; i < translateResults.length; i++) {
+    // This is reversed so that end operations replace contents in string
+    // before the beginning ones.
+    for (var i = translateResults.length - 1; i >= 0; i--) {
       final translateList = translateResults[i];
       final actionList = actionLists[i];
 
-      for (var j = 0; j < translateList.length; j++) {
-        final translatedWord = translateList[j];
+      for (var j = translateList.length - 1; j >= 0; j--) {
+        final translation = translateList[j];
+        final sanitizedTranslation =
+            translation.contains('<') ? removeHtml(translation) : translation;
         final action = actionList[j];
 
         newArbDocument = newArbDocument.copyWith(
           resources: newArbDocument.resources
             ..update(
               action.resourceId,
-              (_) {
-                if (action.index != null) {
-                  // FIXME: This is not right
-                  final arbResource = action.updateFunction(translatedWord);
+              (resource) {
+                final arbResource = action.updateFunction(
+                  sanitizedTranslation,
+                  resource.text,
+                );
 
-                  return arbResource;
-                } else {
-                  final arbResource = action.updateFunction(translatedWord);
-
-                  return arbResource;
-                }
+                return arbResource;
               },
             ),
         );
@@ -222,6 +198,7 @@ Future<List<String>> _translateNow({
     throw http.ClientException('Error ${data.statusCode}: ${data.body}', url);
   } else {
     // TODO: We should use `googleapis` to deserialize this
+    //  Also, we might use translate v3
     final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
 
     final tr = List<Map<String, dynamic>>.from(
@@ -248,7 +225,7 @@ ArgParser _initiateParse() {
             'source_arb file acts as main file to translate to other [language_codes] provided.')
     ..addOption(_outputDirectory,
         help: 'directory from where source_arb file was read')
-    ..addMultiOption(_languageCodes, defaultsTo: ['zh'])
+    ..addMultiOption(_languageCodes, defaultsTo: ['es'])
     ..addOption(_apiKey, help: 'path to api_key must be provided')
     ..addOption(_outputFileName,
         defaultsTo: 'arb_translator_',

@@ -1,7 +1,7 @@
 import 'package:arb_translator/src/icu_parser.dart';
+import 'package:petitparser/petitparser.dart';
 
 import 'arb_attributes.dart';
-import 'base_element.dart';
 
 enum ArbResourceType { text }
 
@@ -10,13 +10,15 @@ class ArbResource {
 
   final String attributeId;
 
-  final BaseElement element;
+  final String text;
 
   final ArbAttributes? attributes;
 
+  List<Token> get tokens => IcuParser().parse(text).value;
+
   const ArbResource._({
     required this.id,
-    required this.element,
+    required this.text,
     required this.attributes,
   }) : attributeId = '@$id';
 
@@ -25,16 +27,11 @@ class ArbResource {
     required MapEntry<String, dynamic>? attributesEntry,
   }) {
     final _arbAttributes = attributesEntry?.value as Map<String, dynamic>?;
-
-    final parseResult = IcuParser().parse(textEntry.value);
-
-    if (parseResult.isFailure) {
-      throw parseResult.message;
-    }
+    final text = textEntry.value;
 
     return ArbResource._(
       id: textEntry.key,
-      element: parseResult.value,
+      text: text,
       attributes: _arbAttributes == null
           ? null
           : ArbAttributes.fromJson(_arbAttributes),
@@ -45,19 +42,19 @@ class ArbResource {
     final _attributes = attributes;
 
     return <String, dynamic>{
-      // id: element.text,
+      id: text,
       if (_attributes != null) attributeId: _attributes.toJson()
     };
   }
 
   ArbResource copyWith({
     String? id,
-    BaseElement? element,
+    String? text,
     ArbAttributes? attributes,
   }) {
     return ArbResource._(
       id: id ?? this.id,
-      element: element ?? this.element,
+      text: text ?? this.text,
       attributes: attributes ?? this.attributes,
     );
   }

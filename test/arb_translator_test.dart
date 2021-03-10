@@ -10,8 +10,8 @@ void main() {
     Directory.current.path.endsWith('test') ? '' : 'test',
   );
 
-  final testFile = File(join(testDirectory, 'resources/test_file.arb'));
-  final contents = testFile.readAsStringSync();
+  final testFileOne = File(join(testDirectory, 'resources/example_one.arb'));
+  final contents = testFileOne.readAsStringSync();
 
   group(
     'Correctly parses arb documents',
@@ -80,23 +80,23 @@ void main() {
           );
         });
 
-        // test('has non empty text', () {
-        //   final text = pageHomeResource.value.value;
+        test('has non empty text', () {
+          final text = pageHomeResource.value.text;
 
-        //   expect(
-        //     text,
-        //     isNotEmpty,
-        //   );
-        // });
+          expect(
+            text,
+            isNotEmpty,
+          );
+        });
 
-        // test('has non empty elements', () {
-        //   final elements = pageHomeResource.value.value.element;
+        test('has non empty tokens', () {
+          final tokens = pageHomeResource.value.tokens;
 
-        //   expect(
-        //     elements.length,
-        //     equals(1),
-        //   );
-        // });
+          expect(
+            tokens.length,
+            equals(3),
+          );
+        });
 
         test('has non empty attributes placeholders', () {
           expect(

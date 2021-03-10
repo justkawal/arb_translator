@@ -30,41 +30,48 @@
 
 import 'package:petitparser/petitparser.dart';
 
-import 'models/base_element.dart';
-import 'models/option.dart';
-import 'models/option_element.dart';
-import 'models/sentence.dart';
-
+/// Some getters have been commented out as they weren't necessary for our
+/// purposes.
 class IcuParser {
   Parser<String> get openCurly => char('{');
 
   Parser<String> get closeCurly => char('}');
 
+  Parser get twoSingleQuotes => string("''").map((x) => "'");
+
   Parser get quotedCurly => (string("'{'") | string("'}'")).map((x) => x[1]);
 
   Parser get icuEscapedText => quotedCurly | twoSingleQuotes;
 
-  Parser get curly => (openCurly | closeCurly);
+  Parser get curly => openCurly | closeCurly;
 
-  Parser get notAllowedInIcuText => curly | char('<');
+  Parser get html => char('<');
+
+  Parser get notAllowedInIcuText => curly | html;
 
   Parser get icuText => notAllowedInIcuText.neg();
 
-  Parser<String> get notAllowedInNormalText => char('{');
+  // Parser<String> get notAllowedInNormalText => char('{');
 
-  Parser<String> get normalText => notAllowedInNormalText.neg();
+  // Parser<String> get normalText => notAllowedInNormalText.neg();
 
-  Parser get messageText => (icuEscapedText | icuText)
+  Parser get messageText => (icuEscapedText | icuText).plus().flatten();
+
+  Parser get justText => messageText.end();
+
+  Parser get optionalMessageText => (icuEscapedText | icuText).star().flatten();
+
+  Parser get placeholderText => (optionalMessageText &
+          openCurly &
+          messageText &
+          closeCurly &
+          optionalMessageText)
       .plus()
-      .flatten()
-      .map((result) => LiteralElement(result));
+      .flatten();
 
-  Parser<LiteralElement> get nonIcuMessageText =>
-      normalText.plus().flatten().map((result) => LiteralElement(result));
+  // Parser<String> get nonIcuMessageText => normalText.plus().flatten();
 
-  Parser get twoSingleQuotes => string("''").map((x) => "'");
-
-  Parser<int> get number => digit().plus().flatten().trim().map<int>(int.parse);
+  // Parser<int> get number => digit().plus().flatten().trim().map<int>(int.parse);
 
   Parser<String> get id =>
       (letter() & (word() | char('_')).star()).flatten().trim();
@@ -89,81 +96,55 @@ class IcuParser {
 
   Parser get pluralLiteral => string('plural');
 
-  Parser get pluralClause => (pluralKeyword &
-          openCurly &
-          interiorText &
-          closeCurly)
-      .trim()
-      .map((result) => Option(result[0],
-          List<BaseElement>.from(result[2] is List ? result[2] : [result[2]])));
+  Parser get pluralClause =>
+      (pluralKeyword & openCurly & interiorText & closeCurly).trim().pick(2);
 
   Parser get plural =>
       preface & pluralLiteral & comma & pluralClause.plus() & closeCurly;
 
-  Parser get intlPlural => plural
-      .map((result) => PluralElement(result[0], List<Option>.from(result[3])));
-
   Parser<String> get selectLiteral => string('select');
 
-  Parser get genderClause => (genderKeyword &
-          openCurly &
-          interiorText &
-          closeCurly)
-      .trim()
-      .map((result) => Option(result[0],
-          List<BaseElement>.from(result[2] is List ? result[2] : [result[2]])));
-
-  Parser get gender =>
-      preface & selectLiteral & comma & genderClause.plus() & closeCurly;
-
-  Parser get intlGender => gender
-      .map((result) => GenderElement(result[0], List<Option>.from(result[3])));
-
-  Parser get selectClause => (id & openCurly & interiorText & closeCurly)
-      .trim()
-      .map((result) => Option(result[0],
-          List<BaseElement>.from(result[2] is List ? result[2] : [result[2]])));
+  Parser get selectClause =>
+      (id & openCurly & interiorText & closeCurly).trim().pick(2);
 
   Parser get generalSelect =>
       preface & selectLiteral & comma & selectClause.plus() & closeCurly;
 
-  Parser<SelectElement> get intlSelect => generalSelect
-      .map((result) => SelectElement(result[0], List<Option>.from(result[3])));
+  Parser get genderClause =>
+      (genderKeyword & openCurly & interiorText & closeCurly).trim().pick(2);
 
-  Parser get pluralOrGenderOrSelect => (intlPlural | intlGender | intlSelect);
+  Parser get gender =>
+      preface & selectLiteral & comma & genderClause.plus() & closeCurly;
 
-  Parser get contents => pluralOrGenderOrSelect | parameter | messageText;
+  Parser get pluralOrGenderOrSelect => plural | gender | generalSelect;
 
-  Parser get simpleText => (nonIcuMessageText | parameter | openCurly)
-          .plus()
-          .callCC((continuation, context) {
-        print('hello');
-        final result = continuation(context);
-        return result;
-      });
+  Parser get pluralOrGenderOrSelectContents =>
+      pluralOrGenderOrSelect.map((result) => result[3]);
 
-  Parser<LiteralElement> get empty => epsilon().map((_) => LiteralElement(''));
+  Parser get contents => pluralOrGenderOrSelect | placeholderText | messageText;
 
-  Parser<ArgumentElement> get parameter =>
-      (openCurly & id & closeCurly).map((result) => ArgumentElement(result[1]));
+  Parser get empty => epsilon();
 
-  Result<BaseElement> parse(String message) {
-    final parsed =
-        (pluralOrGenderOrSelect | simpleText | empty).map<BaseElement>(
-      (dynamic result) {
-        if (result is List) {
-          return Sentence(List<SentenceElement>.from(result));
-        } else {
-          return result as OptionElement;
-        }
+  // Parser get parameter => openCurly & id & closeCurly;
+
+  // TODO: Tokens can be nested deeper and we'll need to get those too using
+  // fold or something
+  Result<List<Token>> parse(String message) {
+    final parsed = (placeholderText.token() |
+            justText.token() |
+            pluralOrGenderOrSelectContents)
+        .parse(message)
+        .map(
+      (element) {
+        return element is List ? List<Token>.from(element) : [element as Token];
       },
-    ).parse(message);
+    );
 
     return parsed;
   }
 
   IcuParser() {
     // There is a cycle here, so we need the explicit set to avoid infinite recursion.
-    interiorText.set(contents.plus() | empty);
+    interiorText.set((contents | empty).token());
   }
 }

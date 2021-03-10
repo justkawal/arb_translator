@@ -7,7 +7,6 @@ class ArbAttributes {
 
   final ResourceType? resourceType;
 
-  // TODO: Have a better data structure for these values
   final Map<String, Map<String, dynamic>>? placeholders;
 
   const ArbAttributes({

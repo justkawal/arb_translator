@@ -17,3 +17,24 @@ String describeEnum(Object enumEntry) {
 T enumFromString<T>(List<T> values, String value) {
   return values.firstWhere((v) => v.toString().split('.')[1] == value);
 }
+
+const _noTranslateOpen = '<span class="notranslate">';
+const _noTranslateClose = '</span>';
+
+String removeHtml(String value) {
+  return value
+      // This might help in removing weird non-unicode chars
+      .replaceAll(RegExp('~\p{Cf}+~u'), ' ')
+      .replaceAll('  ', ' ')
+      .substring('<span>'.length, value.length - '</span>'.length)
+      .replaceAll(_noTranslateOpen, '{')
+      .replaceAll(_noTranslateClose, '}');
+}
+
+String toHtml(String value) {
+  final innerText = value
+      .replaceAll('{', _noTranslateOpen)
+      .replaceAll('}', _noTranslateClose);
+
+  return '<span>$innerText</span>';
+}
