@@ -25,6 +25,7 @@ String removeHtml(String value) {
   return value
       // This might help in removing weird non-unicode chars
       .replaceAll(RegExp('~\p{Cf}+~u'), ' ')
+      // Remove double spaces
       .replaceAll('  ', ' ')
       .substring('<span>'.length, value.length - '</span>'.length)
       .replaceAll(_noTranslateOpen, '{')

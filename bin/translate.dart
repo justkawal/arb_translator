@@ -8,6 +8,7 @@ import 'package:arb_translator/src/models/arb_resource.dart';
 import 'package:arb_translator/src/utils.dart';
 import 'package:args/args.dart';
 import 'package:dart_console/dart_console.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
@@ -38,6 +39,7 @@ class Action {
 
 void main(List<String> args) async {
   final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
+  final unescape = HtmlUnescape();
   final name = yaml['name'] as String;
   final version = yaml['version'] as String;
   final console = Console();
@@ -154,8 +156,9 @@ void main(List<String> args) async {
       for (var j = translateList.length - 1; j >= 0; j--) {
         final action = actionList[j];
         final translation = translateList[j];
-        final sanitizedTranslation =
-            translation.contains('<') ? removeHtml(translation) : translation;
+        final sanitizedTranslation = unescape.convert(
+          translation.contains('<') ? removeHtml(translation) : translation,
+        );
 
         newArbDocument = newArbDocument.copyWith(
           resources: newArbDocument.resources
