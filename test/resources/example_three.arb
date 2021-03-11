@@ -1,0 +1,9 @@
+{
+  "@@last_modified": "2018-09-26T19:32:39.619278",
+  "title": "Stay in Touch (i18n Demo)",
+  "@title": {
+    "description": "App title",
+    "type": "text",
+    "placeholders": {}
+  }
+}

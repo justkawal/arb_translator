@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2020-09-29
+- Adds models, parser, stricter types, null safety and tests
+
 ## [1.0.2] - 2020-09-29
 ### Issue solved
 - Added command-line information

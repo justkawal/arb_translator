@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "arb_translator",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/translate.dart",
+            "console": "terminal",
+            "args": [
+                "--source_arb",
+                "./test/resources/example_one.arb",
+                "--api_key",
+                "./api",
+                "--language_codes",
+                "es"
+            ],
+        }
+    ],
+}

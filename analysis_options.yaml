@@ -8,7 +8,13 @@ include: package:pedantic/analysis_options.yaml
 linter:
   rules:
     - camel_case_types
+    - parameter_assignments
 
 analyzer:
-#   exclude:
-#     - path/to/excluded/files/**
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  # This shouldn't be excluded but the types on parsers are very hard
+  exclude:
+    - "**/*_parser.dart"
+    
