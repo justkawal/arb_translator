@@ -65,7 +65,8 @@ void main(List<String> args) async {
   final sourceArb = result[_sourceArb] as String;
   final apiKeyFilePath = result[_apiKey] as String;
   final outputFileName = result[_outputFileName] as String;
-  final languageCodes = result[_languageCodes] as List<String>;
+  final languageCodes =
+      (result[_languageCodes] as List<String>).map((e) => e.trim());
   var outputDirectory = result[_outputDirectory] as String?;
 
   final arbFile = File(sourceArb);
@@ -95,53 +96,54 @@ void main(List<String> args) async {
 
   console.writeLine('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
 
-  for (final code in languageCodes) {
-    console.writeLine('• Processing for $code');
+  const maxWords = 128;
+  final actionLists = <List<Action>>[];
+  final actionList = <Action>[];
 
-    const maxWords = 128;
-    var newArbDocument = arbDocument.copyWith(locale: code);
-    final actionLists = <List<Action>>[];
-    final actionList = <Action>[];
+  for (final resource in arbDocument.resources.values) {
+    final tokens = resource.tokens;
 
-    for (final resource in arbDocument.resources.values) {
-      final tokens = resource.tokens;
+    for (final token in tokens) {
+      final text = token.value as String;
+      final htmlSafe = text.contains('{') ? toHtml(text) : text;
 
-      for (final token in tokens) {
-        final text = token.value as String;
-        final htmlSafe = text.contains('{') ? toHtml(text) : text;
+      actionList.add(
+        Action(
+          text: htmlSafe,
+          resourceId: resource.id,
+          updateFunction: (String translation, String currentText) {
+            return resource.copyWith(
+              text: currentText.replaceRange(
+                token.start,
+                token.stop,
+                translation,
+              ),
+            );
+          },
+        ),
+      );
 
-        actionList.add(
-          Action(
-            text: htmlSafe,
-            resourceId: resource.id,
-            updateFunction: (String translation, String currentText) {
-              return resource.copyWith(
-                text: currentText.replaceRange(
-                  token.start,
-                  token.stop,
-                  translation,
-                ),
-              );
-            },
-          ),
-        );
-
-        if (actionList.length >= maxWords) {
-          actionLists.add([...actionList]);
-          actionList.clear();
-        }
+      if (actionList.length >= maxWords) {
+        actionLists.add([...actionList]);
+        actionList.clear();
       }
     }
+  }
 
-    if (actionList.isNotEmpty) {
-      actionLists.add([...actionList]);
-      actionList.clear();
-    }
+  if (actionList.isNotEmpty) {
+    actionLists.add([...actionList]);
+    actionList.clear();
+  }
+
+  for (final languageCode in languageCodes) {
+    console.writeLine('• Processing for $languageCode');
+
+    var newArbDocument = arbDocument.copyWith(locale: languageCode);
 
     final futuresList = actionLists.map((list) {
       return _translateNow(
         translateList: list.map((action) => action.text).toList(),
-        parameters: <String, dynamic>{'target': code, 'key': apiKey},
+        parameters: <String, dynamic>{'target': languageCode, 'key': apiKey},
       );
     }).toList();
 
@@ -178,7 +180,7 @@ void main(List<String> args) async {
     }
 
     final file = await File(
-      path.join(outputDirectory, outputFileName + '$code.arb'),
+      path.join(outputDirectory, outputFileName + '$languageCode.arb'),
     ).create(recursive: true);
 
     file.writeAsStringSync(newArbDocument.encode());
