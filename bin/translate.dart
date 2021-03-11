@@ -66,7 +66,7 @@ void main(List<String> args) async {
   final apiKeyFilePath = result[_apiKey] as String;
   final outputFileName = result[_outputFileName] as String;
   final languageCodes =
-      (result[_languageCodes] as List<String>).map((e) => e.trim());
+      (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
   var outputDirectory = result[_outputDirectory] as String?;
 
   final arbFile = File(sourceArb);

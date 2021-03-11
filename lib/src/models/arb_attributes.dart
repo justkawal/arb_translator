@@ -47,10 +47,13 @@ class ArbAttributes {
     ResourceType? resourceType,
     Map<String, Map<String, dynamic>>? placeholders,
   }) {
+    final currentPlaceholders = this.placeholders;
+
     return ArbAttributes(
       description: description ?? this.description,
       resourceType: resourceType ?? this.resourceType,
-      placeholders: placeholders ?? this.placeholders,
+      placeholders: placeholders ??
+          (currentPlaceholders == null ? null : {...currentPlaceholders}),
     );
   }
 }

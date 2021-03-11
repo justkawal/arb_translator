@@ -125,7 +125,7 @@ class ArbDocument {
       appName: appName ?? this.appName,
       lastModified: lastModified ?? this.lastModified,
       locale: locale ?? this.locale,
-      resources: resources ?? this.resources,
+      resources: resources ?? {...this.resources},
     );
   }
 }

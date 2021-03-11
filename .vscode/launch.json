@@ -9,11 +9,11 @@
             "console": "terminal",
             "args": [
                 "--source_arb",
-                "./test/resources/mine.arb",
+                "./test/resources/example_one.arb",
                 "--api_key",
                 "./api",
                 "--language_codes",
-                "ru"
+                "es"
             ],
         }
     ],
