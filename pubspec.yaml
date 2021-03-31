@@ -1,6 +1,6 @@
 name: arb_translator
 description: A command-line utility which helps to translate arb files.
-version: 1.0.3
+version: 1.0.3-null-safety
 homepage: https://github.com/justkawal/arb_translator.git
 
 environment:
@@ -11,6 +11,8 @@ dependencies:
   args: ^2.0.0
   http: ^0.13.0
   dart_console: ^1.0.0
+  collection: ^1.15.0
+  yaml: ^3.1.0
   test: ^1.16.5
   petitparser: ^4.0.2
   html_unescape: ^2.0.0-nullsafety.0
