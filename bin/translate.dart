@@ -58,7 +58,7 @@ void main(List<String> args) async {
   }
 
   if (!result.wasParsed(_apiKey)) {
-    console.writeErrorLine('---api_key is required');
+    console.writeErrorLine('--api_key is required');
     exit(2);
   }
 
