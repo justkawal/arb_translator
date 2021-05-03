@@ -131,8 +131,16 @@ void main() {
         ['pub', 'run', 'arb_translator:translate', '--help'],
       );
 
-      expect(task.stdout, isNotEmpty);
-      expect(task.stderr, isEmpty);
+      expect(
+        task.stdout,
+        isNotEmpty,
+        reason: 'Output was expected no help was given',
+      );
+      expect(
+        task.stderr,
+        isEmpty,
+        reason: 'This should not have thrown an error: ${task.stderr}',
+      );
     });
 
     test('Throw error without arguments', () async {

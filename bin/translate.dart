@@ -18,6 +18,7 @@ final decoder = JsonDecoder();
 
 const _sourceArb = 'source_arb';
 const _apiKey = 'api_key';
+const _help = 'help';
 const _outputDirectory = 'output_directory';
 const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
@@ -47,20 +48,20 @@ void main(List<String> args) async {
   final parser = _initiateParse();
   final result = parser.parse(args);
 
-  if (result['help'] as bool) {
+  if (result[_help] as bool? ?? false) {
     print(parser.usage);
     exit(0);
   }
 
   if (!result.wasParsed(_sourceArb)) {
     _setBrightRed();
-    print('--source_arb is required.');
+    stderr.write('--source_arb is required.');
     exit(2);
   }
 
   if (!result.wasParsed(_apiKey)) {
     _setBrightRed();
-    print('---api_key is required');
+    stderr.write('---api_key is required');
     exit(2);
   }
 
@@ -84,14 +85,14 @@ void main(List<String> args) async {
   [arbFile, apiKeyFile].forEach((element) {
     if (!element.existsSync()) {
       _setBrightRed();
-      print('$element not found on path ${element.path}');
+      stderr.write('$element not found on path ${element.path}');
       exit(2);
     }
   });
 
   if (languageCodes.toSet().length != languageCodes.length) {
     _setBrightRed();
-    print('Please remove language code duplicates');
+    stderr.write('Please remove language code duplicates');
     exit(2);
   }
 
@@ -243,17 +244,23 @@ ArgParser _initiateParse() {
 
   parser
     ..addFlag('help', hide: true, abbr: 'h')
-    ..addOption(_sourceArb,
-        help:
-            'source_arb file acts as main file to translate to other [language_codes] provided.')
-    ..addOption(_outputDirectory,
-        help: 'directory from where source_arb file was read')
+    ..addOption(
+      _sourceArb,
+      help: 'source_arb file acts as main file to translate to other '
+          '[language_codes] provided.',
+    )
+    ..addOption(
+      _outputDirectory,
+      help: 'directory from where source_arb file was read',
+    )
     ..addMultiOption(_languageCodes, defaultsTo: ['es'])
     ..addOption(_apiKey, help: 'path to api_key must be provided')
-    ..addOption(_outputFileName,
-        defaultsTo: 'arb_translator_',
-        help:
-            'output_file_name is the file name used to concate before language codes');
+    ..addOption(
+      _outputFileName,
+      defaultsTo: 'arb_translator_',
+      help: 'output_file_name is the file name used to concate before language '
+          'codes',
+    );
 
   return parser;
 }

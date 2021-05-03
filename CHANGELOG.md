@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2021-05-03
+- Moves to `console` avoid dart run error
+
 ## [1.0.3-null-safety] - 2021-03-31
 - Adds models, parser, stricter types, null safety and tests
 
