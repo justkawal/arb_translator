@@ -1,6 +1,6 @@
 name: arb_translator
 description: A command-line utility which helps to translate arb files.
-version: 1.0.3
+version: 1.0.3-null-safety
 homepage: https://github.com/justkawal/arb_translator.git
 
 environment:

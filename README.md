@@ -28,6 +28,8 @@
   <br>
  
  [arb_translator](https://www.pub.dev/packages/arb_translator) is a dart command-line tool for translating arb file into multiple languages.
+ 
+#### This library is MIT licensed So, it's free to use anytime, anywhere without any consent, because we believe in Open Source work.
 
 # Lets Get Started
 
@@ -76,9 +78,14 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 
 ### How to save api_key
 * Create a text file and then put the api key got from google cloud console in that file.
-* Now just simple call the file's path as the argument for --api_key
+* Now just simply call the file's path as the argument for --api_key
 
 ### Having trouble using api key for translation ?
 * Enable Cloud Translation API inside APIS and Services section in google cloud console.
 * Some quota of google Cloud translation APIS are free for translating upto a limit
 * [Check Pricing and quota here](https://cloud.google.com/translate/pricing)
+
+
+# [Donate on Paypal](https://paypal.me/kawal7415)
+
+## Thanks for d♥️nations, you are very kind hearted person 👌
