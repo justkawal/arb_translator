@@ -7,7 +7,7 @@ import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
 import 'package:arb_translator/src/utils.dart';
 import 'package:args/args.dart';
-import 'package:dart_console/dart_console.dart';
+import 'package:console/console.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -42,7 +42,7 @@ void main(List<String> args) async {
   final unescape = HtmlUnescape();
   final name = yaml['name'] as String;
   final version = yaml['version'] as String;
-  final console = Console();
+  Console.init();
 
   final parser = _initiateParse();
   final result = parser.parse(args);
@@ -53,12 +53,14 @@ void main(List<String> args) async {
   }
 
   if (!result.wasParsed(_sourceArb)) {
-    console.writeErrorLine('--source_arb is required.');
+    _setBrightRed();
+    print('--source_arb is required.');
     exit(2);
   }
 
   if (!result.wasParsed(_apiKey)) {
-    console.writeErrorLine('---api_key is required');
+    _setBrightRed();
+    print('---api_key is required');
     exit(2);
   }
 
@@ -81,20 +83,22 @@ void main(List<String> args) async {
 
   [arbFile, apiKeyFile].forEach((element) {
     if (!element.existsSync()) {
-      console.writeErrorLine('$element not found on path ${element.path}');
+      _setBrightRed();
+      print('$element not found on path ${element.path}');
       exit(2);
     }
   });
 
   if (languageCodes.toSet().length != languageCodes.length) {
-    console.writeErrorLine('Please remove language code duplicates');
+    _setBrightRed();
+    print('Please remove language code duplicates');
     exit(2);
   }
 
-  final width = console.windowWidth;
+  final width = Console.columns;
   final halfLength = ((width - name.length - version.length - 5) / 2).floor();
 
-  console.writeLine('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
+  print('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
 
   const maxWords = 128;
   final actionLists = <List<Action>>[];
@@ -136,7 +140,7 @@ void main(List<String> args) async {
   }
 
   for (final languageCode in languageCodes) {
-    console.writeLine('• Processing for $languageCode');
+    print('• Processing for $languageCode');
 
     var newArbDocument = arbDocument.copyWith(locale: languageCode);
 
@@ -186,9 +190,9 @@ void main(List<String> args) async {
     file.writeAsStringSync(newArbDocument.encode());
   }
 
-  console.setForegroundColor(ConsoleColor.brightGreen);
-  console.writeLine('✓ Transalations created');
-  console.resetColorAttributes();
+  _setBrightGreen();
+  print('✓ Transalations created');
+  Console.resetTextColor();
 }
 
 Future<List<String>> _translateNow({
@@ -224,6 +228,14 @@ Future<List<String>> _translateNow({
   }
 
   return translated;
+}
+
+void _setBrightGreen() {
+  Console.setTextColor(2, bright: true);
+}
+
+void _setBrightRed() {
+  Console.setTextColor(1, bright: true);
 }
 
 ArgParser _initiateParse() {
