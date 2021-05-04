@@ -27,7 +27,8 @@
   <br>
   <br>
  
- [arb_translator](https://www.pub.dev/packages/arb_translator) is a dart command-line tool for translating arb file into multiple languages.
+## Uses Google Cloud Translations for translating files.
+[arb_translator](https://www.pub.dev/packages/arb_translator) is a dart command-line tool for translating arb file into multiple languages.
  
 #### This library is MIT licensed So, it's free to use anytime, anywhere without any consent, because we believe in Open Source work.
 
@@ -64,7 +65,7 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 * use ```--output_directory``` with directory argument to change the saving location for the translated output file
 
 ```yaml
-$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/directory/
+$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/
 ```
 
 ### Don't like the name ```arb_translator_..blah..blah..blah.arb``` ??
@@ -73,7 +74,7 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 * Remember that we will automatically concate the language code of the respective files
 
 ```yaml
-$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/directory/ --output_file_name justkawal_
+$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/ --output_file_name justkawal_
 ```
 
 ### How to save api_key
@@ -89,3 +90,5 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 # [Donate on Paypal](https://paypal.me/kawal7415)
 
 ## Thanks for d♥️nations, you are very kind hearted person 👌
+## Please specify this repo's name while donating.
+## We are working on this package in our free time, when you'll donate it will help us to push more into fixing issues fastly.
