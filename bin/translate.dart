@@ -217,13 +217,13 @@ Future<List<String>> _translateNow({
     //  Also, we might use translate v3
     final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
 
-    final tr = List<Map<String, dynamic>>.from(
+    final translations = List<Map<String, dynamic>>.from(
       jsonData['data']['translations'] as Iterable,
     );
 
-    if (tr.isNotEmpty) {
-      for (final i in tr) {
-        translated.add(i['translatedText'] as String);
+    if (translations.isNotEmpty) {
+      for (final singleTranslation in translations) {
+        translated.add(singleTranslation['translatedText'] as String);
       }
     }
   }
@@ -246,7 +246,7 @@ ArgParser _initiateParse() {
     ..addFlag('help', hide: true, abbr: 'h')
     ..addOption(
       _sourceArb,
-      help: 'source_arb file acts as main file to translate to other '
+      help: 'source_arb file acts as main file to be translated to other '
           '[language_codes] provided.',
     )
     ..addOption(
