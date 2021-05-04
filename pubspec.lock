@@ -51,7 +51,7 @@ packages:
     source: hosted
     version: "0.3.0"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       url: "https://pub.dartlang.org"
@@ -366,7 +366,7 @@ packages:
     source: hosted
     version: "1.0.0"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       url: "https://pub.dartlang.org"
