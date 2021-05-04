@@ -9,6 +9,7 @@ linter:
   rules:
     - camel_case_types
     - parameter_assignments
+    - require_trailing_commas
 
 analyzer:
   strong-mode:
