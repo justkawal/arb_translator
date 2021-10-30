@@ -37,7 +37,7 @@
 ### Add to the command line with
 
 ```yaml
-$  pub activate global arb_translator
+$  pub global activate arb_translator
 ```
 
 ### Find Out available options
