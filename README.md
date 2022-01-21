@@ -37,13 +37,13 @@
 ### Add to the command line with
 
 ```yaml
-$  pub global activate arb_translator
+  flutter packages pub global activate arb_translator
 ```
 
 ### Find Out available options
 
 ```yaml
-$  pub run arb_translator:translate --help
+  flutter packages pub run arb_translator:translate --help
 ```
 
 ### Options
@@ -58,14 +58,14 @@ options | description
 ### Translating
 
 ```yaml
-$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh
+  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh
 ```
 
 ### Changing location of translated file 
 * use ```--output_directory``` with directory argument to change the saving location for the translated output file
 
 ```yaml
-$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/
+flutter packages pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/
 ```
 
 ### Don't like the name ```arb_translator_..blah..blah..blah.arb``` ??
@@ -74,7 +74,7 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 * Remember that we will automatically concate the language code of the respective files
 
 ```yaml
-$  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/ --output_file_name justkawal_
+flutter packages pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/ --output_file_name justkawal_
 ```
 
 ### How to save api_key

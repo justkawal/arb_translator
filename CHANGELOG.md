@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2022-01-21
+- Minor Fixes
+
 ## [1.0.4] - 2021-05-03
 - Moves to `console` avoid dart run error
 

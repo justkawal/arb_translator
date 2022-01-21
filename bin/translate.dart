@@ -96,10 +96,7 @@ void main(List<String> args) async {
     exit(2);
   }
 
-  final width = Console.columns;
-  final halfLength = ((width - name.length - version.length - 5) / 2).floor();
-
-  print('${'-' * halfLength}  $name $version  ${'-' * halfLength}');
+  print('${'-' * 15}  $name $version  ${'-' * 15}');
 
   const maxWords = 128;
   final actionLists = <List<Action>>[];
