@@ -90,5 +90,3 @@ $  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key
 # [Donate on Paypal](https://paypal.me/kawal7415)
 
 ## Thanks for d♥️nations, you are very kind hearted person 👌
-## Please specify this repo's name while donating.
-## We are working on this package in our free time, when you'll donate it will help us to push more into fixing issues fastly.
