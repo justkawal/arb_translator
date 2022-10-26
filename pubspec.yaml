@@ -1,10 +1,10 @@
-name: arb_translator
-description: A command-line utility which helps to translate arb files with the use of google translations.
-version: 1.0.5
+name: arb_translator_abcx3
+description: Forked and updated pubspec. A command-line utility which helps to translate arb files with the use of google translations.
+version: 1.1.2
 homepage: https://github.com/justkawal/arb_translator.git
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.16.1 <4.0.0"
 
 dependencies:
   path: ^1.8.0
@@ -14,9 +14,8 @@ dependencies:
   test: ^1.17.3
   collection: ^1.15.0
   yaml: ^3.1.0
-  petitparser: ^4.0.2
+  petitparser: ^5.1.0
   html_unescape: ^2.0.0
+  lints: ^2.0.1
 
-dev_dependencies:
-  pedantic: ^1.11.0
   

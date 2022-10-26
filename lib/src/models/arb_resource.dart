@@ -1,4 +1,4 @@
-import 'package:arb_translator/src/icu_parser.dart';
+import 'package:arb_translator_abcx3/src/icu_parser.dart';
 import 'package:petitparser/petitparser.dart';
 
 import 'arb_attributes.dart';
@@ -32,19 +32,14 @@ class ArbResource {
     return ArbResource._(
       id: textEntry.key,
       text: text,
-      attributes: _arbAttributes == null
-          ? null
-          : ArbAttributes.fromJson(_arbAttributes),
+      attributes: _arbAttributes == null ? null : ArbAttributes.fromJson(_arbAttributes),
     );
   }
 
   Map<String, dynamic> toJson() {
     final _attributes = attributes;
 
-    return <String, dynamic>{
-      id: text,
-      if (_attributes != null) attributeId: _attributes.toJson()
-    };
+    return <String, dynamic>{id: text, if (_attributes != null) attributeId: _attributes.toJson()};
   }
 
   ArbResource copyWith({

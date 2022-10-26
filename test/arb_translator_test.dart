@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:arb_translator/src/models/arb_document.dart';
+import 'package:arb_translator_abcx3/src/models/arb_document.dart';
 import 'package:path/path.dart' show join;
 import 'package:test/test.dart';
 
@@ -100,17 +100,14 @@ void main() {
 
         test('has non empty attributes placeholders', () {
           expect(
-            pageHomeResource.value.attributes?.placeholders?.isNotEmpty ??
-                false,
+            pageHomeResource.value.attributes?.placeholders?.isNotEmpty ?? false,
             isTrue,
           );
         });
 
         test('There exists a key \'count\' inside placholders', () {
           expect(
-            pageHomeResource.value.attributes?.placeholders
-                    ?.containsKey('count') ??
-                false,
+            pageHomeResource.value.attributes?.placeholders?.containsKey('count') ?? false,
             isTrue,
           );
         });
