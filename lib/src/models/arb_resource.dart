@@ -1,4 +1,4 @@
-import 'package:arb_translator_abcx3/src/icu_parser.dart';
+import 'package:arb_translator/src/icu_parser.dart';
 import 'package:petitparser/petitparser.dart';
 
 import 'arb_attributes.dart';

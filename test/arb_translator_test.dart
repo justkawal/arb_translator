@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:arb_translator_abcx3/src/models/arb_document.dart';
+import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:path/path.dart' show join;
 import 'package:test/test.dart';
 

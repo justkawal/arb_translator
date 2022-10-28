@@ -3,9 +3,9 @@ library translate;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:arb_translator_abcx3/src/models/arb_document.dart';
-import 'package:arb_translator_abcx3/src/models/arb_resource.dart';
-import 'package:arb_translator_abcx3/src/utils.dart';
+import 'package:arb_translator/src/models/arb_document.dart';
+import 'package:arb_translator/src/models/arb_resource.dart';
+import 'package:arb_translator/src/utils.dart';
 import 'package:args/args.dart';
 import 'package:console/console.dart';
 import 'package:html_unescape/html_unescape.dart';
