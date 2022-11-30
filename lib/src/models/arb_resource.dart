@@ -32,14 +32,19 @@ class ArbResource {
     return ArbResource._(
       id: textEntry.key,
       text: text,
-      attributes: _arbAttributes == null ? null : ArbAttributes.fromJson(_arbAttributes),
+      attributes: _arbAttributes == null
+          ? null
+          : ArbAttributes.fromJson(_arbAttributes),
     );
   }
 
   Map<String, dynamic> toJson() {
     final _attributes = attributes;
 
-    return <String, dynamic>{id: text, if (_attributes != null) attributeId: _attributes.toJson()};
+    return <String, dynamic>{
+      id: text,
+      if (_attributes != null) attributeId: _attributes.toJson()
+    };
   }
 
   ArbResource copyWith({
