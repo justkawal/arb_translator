@@ -82,13 +82,13 @@ void main(List<String> args) async {
   outputDirectory ??=
       arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
 
-  [arbFile, apiKeyFile].forEach((element) {
+  for (var element in [arbFile, apiKeyFile]) {
     if (!element.existsSync()) {
       _setBrightRed();
       stderr.write('$element not found on path ${element.path}');
       exit(2);
     }
-  });
+  }
 
   if (languageCodes.toSet().length != languageCodes.length) {
     _setBrightRed();
@@ -182,7 +182,7 @@ void main(List<String> args) async {
     }
 
     final file = await File(
-      path.join(outputDirectory, outputFileName + '$languageCode.arb'),
+      path.join(outputDirectory, '$outputFileName$languageCode.arb'),
     ).create(recursive: true);
 
     file.writeAsStringSync(newArbDocument.encode());

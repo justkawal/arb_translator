@@ -37,10 +37,6 @@ class ArbDocument {
   }
 
   Map<String, dynamic> toJson() {
-    final _locale = locale;
-    final _lastModified = lastModified;
-    final _appName = appName;
-
     final resourceMap = resources.values.fold<Map<String, dynamic>>(
       <String, dynamic>{},
       (previousValue, resource) {
@@ -49,10 +45,10 @@ class ArbDocument {
     );
 
     return <String, dynamic>{
-      if (_locale != null) '@@locale': _locale,
-      if (_lastModified != null)
-        '@@last_modified': _lastModified.toIso8601String(),
-      if (_appName != null) 'appName': _appName,
+      if (locale != null) '@@locale': locale,
+      if (lastModified != null)
+        '@@last_modified': lastModified!.toIso8601String(),
+      if (appName != null) 'appName': appName,
       ...resourceMap,
     };
   }
@@ -61,21 +57,21 @@ class ArbDocument {
     Map<String, dynamic> json, {
     required bool includeTimestampIfNull,
   }) {
-    final _locale = json.remove('@@locale') as String?;
-    final _appName = json.remove('appName') as String?;
-    final _lastModified = json.remove('@@last_modified') as String?;
+    final locale = json.remove('@@locale') as String?;
+    final appName = json.remove('appName') as String?;
+    final lastModified = json.remove('@@last_modified') as String?;
 
-    var _dateModified = includeTimestampIfNull ? DateTime.now() : null;
+    var dateModified = includeTimestampIfNull ? DateTime.now() : null;
 
-    if (_lastModified != null) {
-      _dateModified = DateTime.parse(_lastModified);
+    if (lastModified != null) {
+      dateModified = DateTime.parse(lastModified);
     }
 
     final resourceEntries = json.entries
         .where((entry) => !entry.key.startsWith('@'))
         .map<MapEntry<String, ArbResource>>((entry) {
       final attributesEntry = (json.entries.firstWhereOrNull(
-        (_entry) => _entry.key == '@${entry.key}',
+        (entry) => entry.key == '@${entry.key}',
       ));
 
       return MapEntry(
@@ -88,9 +84,9 @@ class ArbDocument {
     });
 
     return ArbDocument.empty(
-      locale: _locale,
-      appName: _appName,
-      lastModified: _dateModified,
+      locale: locale,
+      appName: appName,
+      lastModified: dateModified,
       resources: Map<String, ArbResource>.fromEntries(resourceEntries),
     );
   }
