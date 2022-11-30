@@ -26,24 +26,21 @@ class ArbResource {
     required MapEntry<String, String> textEntry,
     required MapEntry<String, dynamic>? attributesEntry,
   }) {
-    final _arbAttributes = attributesEntry?.value as Map<String, dynamic>?;
-    final text = textEntry.value;
-
     return ArbResource._(
       id: textEntry.key,
-      text: text,
-      attributes: _arbAttributes == null
-          ? null
-          : ArbAttributes.fromJson(_arbAttributes),
+      text: textEntry.value,
+      attributes: attributesEntry?.value != null
+          ? ArbAttributes.fromJson(
+              attributesEntry!.value as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    final _attributes = attributes;
-
     return <String, dynamic>{
       id: text,
-      if (_attributes != null) attributeId: _attributes.toJson()
+      if (attributes != null) attributeId: attributes!.toJson()
     };
   }
 
