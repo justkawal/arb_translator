@@ -71,7 +71,7 @@ class ArbDocument {
         .where((entry) => !entry.key.startsWith('@'))
         .map<MapEntry<String, ArbResource>>((entry) {
       final attributesEntry = (json.entries.firstWhereOrNull(
-        (entry) => entry.key == '@${entry.key}',
+        (attributeEntry) => attributeEntry.key == '@${entry.key}',
       ));
 
       return MapEntry(
