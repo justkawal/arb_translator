@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "arb_translator",
             "request": "launch",
@@ -16,5 +17,5 @@
                 "es"
             ],
         }
-    ],
+    ]
 }

@@ -19,14 +19,14 @@
       "count": {}
     }
   },
-  "pageHomeBirthday": "{sex, select, male{Su cumpleaños} female{Su cumpleaños} other{Su cumpleaños}}",
+  "pageHomeBirthday": "{sex, select, male{Su cumpleaños} female{Su cumpleaños} other{su cumpleaños}}",
   "@pageHomeBirthday": {
     "description": "Birthday message on the Home screen",
     "placeholders": {
       "sex": {}
     }
   },
-  "commonVehicleType": "{vehicleType, select, sedan{Luego} cabriolet{Cabriolet de techo macizo} truck{Camión de 16 ruedas} other{Otro}}",
+  "commonVehicleType": "{vehicleType, select, sedan{Después} cabriolet{descapotable de techo sólido} truck{camión de 16 ruedas} other{Otro}}",
   "@commonVehicleType": {
     "description": "Vehicle type",
     "placeholders": {

@@ -100,17 +100,14 @@ void main() {
 
         test('has non empty attributes placeholders', () {
           expect(
-            pageHomeResource.value.attributes?.placeholders?.isNotEmpty ??
-                false,
+            pageHomeResource.value.attributes?.placeholders?.isNotEmpty ?? false,
             isTrue,
           );
         });
 
         test('There exists a key \'count\' inside placholders', () {
           expect(
-            pageHomeResource.value.attributes?.placeholders
-                    ?.containsKey('count') ??
-                false,
+            pageHomeResource.value.attributes?.placeholders?.containsKey('count') ?? false,
             isTrue,
           );
         });
