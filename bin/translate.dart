@@ -24,8 +24,7 @@ const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
 class Action {
-  final ArbResource Function(String translation, String currentText)
-      updateFunction;
+  final ArbResource Function(String translation, String currentText) updateFunction;
 
   final String text;
 
@@ -68,8 +67,7 @@ void main(List<String> args) async {
   final sourceArb = result[_sourceArb] as String;
   final apiKeyFilePath = result[_apiKey] as String;
   final outputFileName = result[_outputFileName] as String;
-  final languageCodes =
-      (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
+  final languageCodes = (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
   var outputDirectory = result[_outputDirectory] as String?;
 
   final arbFile = File(sourceArb);
@@ -79,8 +77,7 @@ void main(List<String> args) async {
   final src = arbFile.readAsStringSync();
   final arbDocument = ArbDocument.decode(src);
 
-  outputDirectory ??=
-      arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
+  outputDirectory ??= arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
 
   [arbFile, apiKeyFile].forEach((element) {
     if (!element.existsSync()) {
@@ -201,9 +198,7 @@ Future<List<String>> _translateNow({
 
   parameters['q'] = translateList;
 
-  final url =
-      Uri.parse('https://translation.googleapis.com/language/translate/v2')
-          .resolveUri(Uri(queryParameters: parameters));
+  final url = Uri.parse('https://translation.googleapis.com/language/translate/v2').resolveUri(Uri(queryParameters: parameters));
 
   final data = await http.get(url);
 
