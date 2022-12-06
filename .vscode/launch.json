@@ -14,7 +14,7 @@
                 "--api_key",
                 "D:/github/ABCx3/dart_secrets/api_key.txt",
                 "--language_codes",
-                "sv"
+                "sv,es"
             ],
         }
     ]

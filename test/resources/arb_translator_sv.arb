@@ -1,6 +1,19 @@
 {
   "@@locale": "sv",
   "appName": "Demo app",
+  "pageHomeTitle": "Välkommen {firstName}",
+  "@pageHomeTitle": {
+    "description": "Welcome message on the Home screen",
+    "placeholders": {
+      "firstName": {
+        "type": "String"
+      }
+    }
+  },
+  "welcome": "Haj på daj!",
+  "@welcome": {
+    "description": "Greeting with manual translation"
+  },
   "commonVehicleType": "{vehicleType, select, sedan{Sedan} cabriolet{Cabriolet i massiv tak} truck{16 hjul lastbil} other{Övrig}}",
   "@commonVehicleType": {
     "description": "Vehicle type",
@@ -8,21 +21,9 @@
       "vehicleType": {}
     }
   },
-  "welcome": "Välkommen",
-  "@welcome": {
-    "description": "Welcome message with manual translation"
-  },
   "pageLoginUsername": "Ditt användarnamn",
-  "@pageLoginUsername": {},
   "pageLoginPassword": "Ditt lösenord",
   "@pageLoginPassword": {},
-  "pageHomeTitle": "Välkommen {firstName}",
-  "@pageHomeTitle": {
-    "description": "Welcome message on the Home screen",
-    "placeholders": {
-      "firstName": {}
-    }
-  },
   "pageHomeInboxCount": "{count, plural, zero{Du har inga nya meddelanden} one{Du har 1 nytt meddelande} other{Du har {count} nya meddelanden}}",
   "@pageHomeInboxCount": {
     "description": "New messages count on the Home screen",

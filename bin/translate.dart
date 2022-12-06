@@ -37,43 +37,8 @@ class Action {
   });
 }
 
-ArgResults parseArguments(List<String> args) {
-  final parser = _initiateParse();
-  final result = parser.parse(args);
-
-  if (result[_help] as bool? ?? false) {
-    print(parser.usage);
-    exit(0);
-  }
-
-  if (!result.wasParsed(_sourceArb)) {
-    _setBrightRed();
-    stderr.write('--source_arb is required.');
-    exit(2);
-  }
-
-  if (!result.wasParsed(_apiKey)) {
-    _setBrightRed();
-    stderr.write('---api_key is required');
-    exit(2);
-  }
-  return result;
-}
-
-File createFileRef(String path) {
-  final file = File(path);
-  if (file.existsSync()) {
-    return file;
-  } else {
-    _setBrightRed();
-    stderr.write('$file not found on path ${file.path}');
-    exit(2);
-  }
-}
-
 void main(List<String> args) async {
   final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
-  final unescape = HtmlUnescape();
   final name = yaml['name'] as String;
   final version = yaml['version'] as String;
   Console.init();
@@ -97,9 +62,29 @@ void main(List<String> args) async {
     stderr.write('Please remove language code duplicates');
     exit(2);
   }
-
   print('${'-' * 15}  $name $version  ${'-' * 15}');
 
+  final actionLists = createActionLists(arbDocument);
+
+  for (final languageCode in languageCodes) {
+    print('• Processing for $languageCode');
+
+    createArbFile(
+      languageCode: languageCode,
+      arbDocument: arbDocument,
+      actionLists: actionLists,
+      outputDirectory: outputDirectory,
+      outputFileName: outputFileName,
+      apiKey: apiKey,
+    );
+  }
+
+  _setBrightGreen();
+  print('✓ Transalations created');
+  Console.resetTextColor();
+}
+
+List<List<Action>> createActionLists(ArbDocument arbDocument) {
   const maxWords = 128;
   final actionLists = <List<Action>>[];
   final actionList = <Action>[];
@@ -138,62 +123,100 @@ void main(List<String> args) async {
     actionLists.add([...actionList]);
     actionList.clear();
   }
+  return actionLists;
+}
 
-  for (final languageCode in languageCodes) {
-    print('• Processing for $languageCode');
+void createArbFile({
+  required String languageCode,
+  required ArbDocument arbDocument,
+  required List<List<Action>> actionLists,
+  required String outputDirectory,
+  required String outputFileName,
+  required String apiKey,
+}) async {
+  final unescape = HtmlUnescape();
+  var newArbDocument = arbDocument.copyWith(locale: languageCode);
 
-    var newArbDocument = arbDocument.copyWith(locale: languageCode);
+  final futuresList = actionLists.map((list) {
+    return _translateNow(
+      translateList: list.map((action) => action.text).toList(),
+      parameters: <String, dynamic>{'target': languageCode, 'key': apiKey},
+    );
+  }).toList();
 
-    final futuresList = actionLists.map((list) {
-      return _translateNow(
-        translateList: list.map((action) => action.text).toList(),
-        parameters: <String, dynamic>{'target': languageCode, 'key': apiKey},
+  var translateResults = await Future.wait(futuresList);
+
+  translateResults = insertManualTranslations(translateResults, actionLists, languageCode, arbDocument);
+
+  // This is reversed so that end operations replace contents in string
+  // before the beginning ones.
+  for (var i = translateResults.length - 1; i >= 0; i--) {
+    final translateList = translateResults[i];
+    final actionList = actionLists[i];
+
+    for (var j = translateList.length - 1; j >= 0; j--) {
+      final action = actionList[j];
+      final translation = translateList[j];
+      final sanitizedTranslation = unescape.convert(
+        translation.contains('<') ? removeHtml(translation) : translation,
       );
-    }).toList();
 
-    final translateResults = await Future.wait(futuresList);
+      newArbDocument = newArbDocument.copyWith(
+        resources: newArbDocument.resources
+          ..update(
+            action.resourceId,
+            (resource) {
+              final arbResource = action.updateFunction(
+                sanitizedTranslation,
+                resource.text,
+              );
 
-    // This is reversed so that end operations replace contents in string
-    // before the beginning ones.
-    for (var i = translateResults.length - 1; i >= 0; i--) {
-      final translateList = translateResults[i];
-      final actionList = actionLists[i];
-
-      for (var j = translateList.length - 1; j >= 0; j--) {
-        final action = actionList[j];
-        final translation = translateList[j];
-        final sanitizedTranslation = unescape.convert(
-          translation.contains('<') ? removeHtml(translation) : translation,
-        );
-
-        newArbDocument = newArbDocument.copyWith(
-          resources: newArbDocument.resources
-            ..update(
-              action.resourceId,
-              (resource) {
-                final arbResource = action.updateFunction(
-                  sanitizedTranslation,
-                  resource.text,
-                );
-
-                return arbResource;
-              },
-            ),
-        );
-      }
+              return arbResource;
+            },
+          ),
+      );
     }
-
-    final file = await File(
-      path.join(outputDirectory, '$outputFileName$languageCode.arb'),
-    ).create(recursive: true);
-
-    file.writeAsStringSync(newArbDocument.encode());
   }
 
-  _setBrightGreen();
-  print('✓ Transalations created');
-  Console.resetTextColor();
+  final file = await File(
+    path.join(outputDirectory, '$outputFileName$languageCode.arb'),
+  ).create(recursive: true);
+
+  file.writeAsStringSync(newArbDocument.encode());
 }
+
+List<List<String>> insertManualTranslations(
+    List<List<String>> translationsLists, List<List<Action>> actionLists, String languageCode, ArbDocument arbDocument) {
+  List<List<String>> updatedTranslationsLists = [];
+
+  for (var i = 0; i < translationsLists.length; i++) {
+    final updatedTranslations = <String>[];
+    updatedTranslationsLists.add(updatedTranslations);
+    final translations = translationsLists[i];
+
+    for (var j = 0; j < translations.length; j++) {
+      final translation = translations[j];
+      final resourceId = actionLists[i][j].resourceId;
+      final arbResource = arbDocument.resources[resourceId];
+      final xTranslations = arbResource?.attributes?.xTranslations;
+      if (xTranslations != null && xTranslations[languageCode] != null) {
+        updatedTranslations.add(xTranslations[languageCode] as String);
+      } else {
+        updatedTranslations.add(translations[j]);
+      }
+    }
+  }
+  return updatedTranslationsLists;
+}
+
+/* return translationsLists.map((list) {
+    outerIndex++;
+    int innerIdx = -1;
+    return list.map((e) {
+      innerIdx++;
+      return e;
+    }).toList();
+  }).toList(); */
 
 Future<List<String>> _translateNow({
   required List<String> translateList,
@@ -210,8 +233,7 @@ Future<List<String>> _translateNow({
   if (data.statusCode != 200) {
     throw http.ClientException('Error ${data.statusCode}: ${data.body}', url);
   } else {
-    // TODO: We should use `googleapis` to deserialize this
-    //  Also, we might use translate v3
+    // TO DO: We should use `googleapis` to deserialize this. We might also use translate v3.
     final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
 
     final translations = List<Map<String, dynamic>>.from(
@@ -260,4 +282,38 @@ ArgParser _initiateParse() {
     );
 
   return parser;
+}
+
+ArgResults parseArguments(List<String> args) {
+  final parser = _initiateParse();
+  final result = parser.parse(args);
+
+  if (result[_help] as bool? ?? false) {
+    print(parser.usage);
+    exit(0);
+  }
+
+  if (!result.wasParsed(_sourceArb)) {
+    _setBrightRed();
+    stderr.write('--source_arb is required.');
+    exit(2);
+  }
+
+  if (!result.wasParsed(_apiKey)) {
+    _setBrightRed();
+    stderr.write('---api_key is required');
+    exit(2);
+  }
+  return result;
+}
+
+File createFileRef(String path) {
+  final file = File(path);
+  if (file.existsSync()) {
+    return file;
+  } else {
+    _setBrightRed();
+    stderr.write('$file not found on path ${file.path}');
+    exit(2);
+  }
 }
