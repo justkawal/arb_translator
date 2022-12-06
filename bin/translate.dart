@@ -24,8 +24,7 @@ const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
 class Action {
-  final ArbResource Function(String translation, String currentText)
-      updateFunction;
+  final ArbResource Function(String translation, String currentText) updateFunction;
 
   final String text;
 
@@ -38,13 +37,7 @@ class Action {
   });
 }
 
-void main(List<String> args) async {
-  final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
-  final unescape = HtmlUnescape();
-  final name = yaml['name'] as String;
-  final version = yaml['version'] as String;
-  Console.init();
-
+ArgResults parseArguments(List<String> args) {
   final parser = _initiateParse();
   final result = parser.parse(args);
 
@@ -64,31 +57,40 @@ void main(List<String> args) async {
     stderr.write('---api_key is required');
     exit(2);
   }
+  return result;
+}
 
-  final sourceArb = result[_sourceArb] as String;
-  final apiKeyFilePath = result[_apiKey] as String;
+File createFileRef(String path) {
+  final file = File(path);
+  if (file.existsSync()) {
+    return file;
+  } else {
+    _setBrightRed();
+    stderr.write('$file not found on path ${file.path}');
+    exit(2);
+  }
+}
+
+void main(List<String> args) async {
+  final yaml = loadYaml(await File('./pubspec.yaml').readAsString()) as YamlMap;
+  final unescape = HtmlUnescape();
+  final name = yaml['name'] as String;
+  final version = yaml['version'] as String;
+  Console.init();
+
+  final result = parseArguments(args);
+
+  final arbFile = createFileRef(result[_sourceArb] as String);
+  final apiKeyFile = createFileRef(result[_apiKey] as String);
   final outputFileName = result[_outputFileName] as String;
-  final languageCodes =
-      (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
+  final languageCodes = (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
   var outputDirectory = result[_outputDirectory] as String?;
-
-  final arbFile = File(sourceArb);
-  final apiKeyFile = File(apiKeyFilePath);
 
   final apiKey = apiKeyFile.readAsStringSync();
   final src = arbFile.readAsStringSync();
   final arbDocument = ArbDocument.decode(src);
 
-  outputDirectory ??=
-      arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
-
-  for (var element in [arbFile, apiKeyFile]) {
-    if (!element.existsSync()) {
-      _setBrightRed();
-      stderr.write('$element not found on path ${element.path}');
-      exit(2);
-    }
-  }
+  outputDirectory ??= arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
 
   if (languageCodes.toSet().length != languageCodes.length) {
     _setBrightRed();
@@ -201,9 +203,7 @@ Future<List<String>> _translateNow({
 
   parameters['q'] = translateList;
 
-  final url =
-      Uri.parse('https://translation.googleapis.com/language/translate/v2')
-          .resolveUri(Uri(queryParameters: parameters));
+  final url = Uri.parse('https://translation.googleapis.com/language/translate/v2').resolveUri(Uri(queryParameters: parameters));
 
   final data = await http.get(url);
 
