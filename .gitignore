@@ -10,3 +10,11 @@ build/
 doc/api/
 
 api
+/.idea/.gitignore
+/.idea/arb_translator.iml
+/.idea/libraries/Dart_Packages.xml
+/.idea/libraries/Dart_SDK.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/test.cmd
+/.idea/vcs.xml
