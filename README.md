@@ -98,8 +98,3 @@ flutter packages pub run arb_translator:translate --source_arb path/to/source_en
 * Enable Cloud Translation API inside APIS and Services section in google cloud console.
 * Some quota of google Cloud translation APIS are free for translating upto a limit
 * [Check Pricing and quota here](https://cloud.google.com/translate/pricing)
-
-
-# [Donate on Paypal](https://paypal.me/kawal7415)
-
-## Thanks for d♥️nations, you are very kind hearted person 👌
