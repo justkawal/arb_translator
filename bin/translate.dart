@@ -5,11 +5,12 @@ import 'dart:io';
 
 import 'package:arb_translator/src/models/arb_document.dart';
 import 'package:arb_translator/src/models/arb_resource.dart';
+import 'package:arb_translator/src/translators/deepl_translator.dart';
+import 'package:arb_translator/src/translators/google_translator.dart';
 import 'package:arb_translator/src/utils.dart';
 import 'package:args/args.dart';
 import 'package:console/console.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
@@ -22,6 +23,7 @@ const _help = 'help';
 const _outputDirectory = 'output_directory';
 const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
+const _translator = 'translator';
 
 class Action {
   final ArbResource Function(String translation, String currentText)
@@ -71,11 +73,13 @@ void main(List<String> args) async {
   final languageCodes =
       (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
   var outputDirectory = result[_outputDirectory] as String?;
+  final translator = result[_translator] as String;
 
   final arbFile = File(sourceArb);
   final apiKeyFile = File(apiKeyFilePath);
 
   final apiKey = apiKeyFile.readAsStringSync();
+
   final src = arbFile.readAsStringSync();
   final arbDocument = ArbDocument.decode(src);
 
@@ -137,16 +141,31 @@ void main(List<String> args) async {
     actionList.clear();
   }
 
+  print('• Using translator $translator');
   for (final languageCode in languageCodes) {
     print('• Processing for $languageCode');
 
     var newArbDocument = arbDocument.copyWith(locale: languageCode);
 
     final futuresList = actionLists.map((list) {
-      return _translateNow(
-        translateList: list.map((action) => action.text).toList(),
-        parameters: <String, dynamic>{'target': languageCode, 'key': apiKey},
-      );
+      switch (translator) {
+        case 'deepl':
+          return DeeplTranslator(
+            apiKey: apiKey,
+            translateList: list.map((action) => action.text).toList(),
+            targetLanguageCode: languageCode,
+          ).translate();
+        case 'google':
+          return GoogleTranslator(
+            apiKey: apiKey,
+            translateList: list.map((action) => action.text).toList(),
+            targetLanguageCode: languageCode,
+          ).translate();
+        default:
+          _setBrightRed();
+          stderr.write('Please specify a valid translator.');
+          exit(2);
+      }
     }).toList();
 
     final translateResults = await Future.wait(futuresList);
@@ -193,41 +212,6 @@ void main(List<String> args) async {
   Console.resetTextColor();
 }
 
-Future<List<String>> _translateNow({
-  required List<String> translateList,
-  required Map<String, dynamic> parameters,
-}) async {
-  final translated = <String>[];
-
-  parameters['q'] = translateList;
-
-  final url =
-      Uri.parse('https://translation.googleapis.com/language/translate/v2')
-          .resolveUri(Uri(queryParameters: parameters));
-
-  final data = await http.get(url);
-
-  if (data.statusCode != 200) {
-    throw http.ClientException('Error ${data.statusCode}: ${data.body}', url);
-  } else {
-    // TODO: We should use `googleapis` to deserialize this
-    //  Also, we might use translate v3
-    final jsonData = jsonDecode(data.body) as Map<String, dynamic>;
-
-    final translations = List<Map<String, dynamic>>.from(
-      jsonData['data']['translations'] as Iterable,
-    );
-
-    if (translations.isNotEmpty) {
-      for (final singleTranslation in translations) {
-        translated.add(singleTranslation['translatedText'] as String);
-      }
-    }
-  }
-
-  return translated;
-}
-
 void _setBrightGreen() {
   Console.setTextColor(2, bright: true);
 }
@@ -245,6 +229,11 @@ ArgParser _initiateParse() {
       _sourceArb,
       help: 'source_arb file acts as main file to be translated to other '
           '[language_codes] provided.',
+    )
+    ..addOption(
+      _translator,
+      defaultsTo: 'google',
+      help: 'translator option like google or deepl',
     )
     ..addOption(
       _outputDirectory,
