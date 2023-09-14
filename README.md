@@ -51,6 +51,7 @@ options | description
 ------------ | -------------
  source_arb | (@required) path to the source arb file which has to be translated to other languages
  api_key | (@required) path to the file of api key which contains api key of google cloud console
+ translator | (optional) specify which translation engine should be used. Current options are 'google' (default) and 'deepl'. 
  output_directory | (optional) directory where the translated files should be written , by-default it is set to directory of ```source_arb``` file
  language_codes | (optional) comma separated language codes in which translation has to be done  , by-default it is set to en,zh Eg. is ```--language_codes ml,kn,pa,en```
  output_file_name | (optional) output _file_name is the initial name to be concatenated with the language codes. Eg. ```--output_file_name wow``` then this will save the translated files as ```wow_{language_code}.arb```, Suppose the langauge code is ml,hi then the files created will be wow_ml.arb and wow_zh.arb
@@ -58,7 +59,7 @@ options | description
 ### Translating
 
 ```yaml
-  pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh
+  pub run arb_translator:translate --source_arb path/to/source_en.arb --translator deepl --api_key path/to/api_key_file --language_codes hi,en,zh
 ```
 
 ### Changing location of translated file 
@@ -79,6 +80,7 @@ flutter packages pub run arb_translator:translate --source_arb path/to/source_en
 
 ### How to save api_key
 * Create a text file and then put the api key got from google cloud console in that file.
+* Make sure the key file contains only the key and no new lines or spaces following the key.
 * Now just simply call the file's path as the argument for --api_key
 
 ### Having trouble using api key for translation ?
