@@ -14,8 +14,8 @@ dependencies:
   html_unescape: ^2.0.0
   http: ^1.0.0
   path: ^1.8.2
-  petitparser: ^5.1.0
+  petitparser: ^6.0.1
   yaml: ^3.1.1
 dev_dependencies:
-  lints: ^2.0.1
+  lints: ^3.0.0
   test: ^1.24.1
