@@ -24,7 +24,8 @@ const _languageCodes = 'language_codes';
 const _outputFileName = 'output_file_name';
 
 class Action {
-  final ArbResource Function(String translation, String currentText) updateFunction;
+  final ArbResource Function(String translation, String currentText)
+      updateFunction;
 
   final String text;
 
@@ -48,14 +49,16 @@ void main(List<String> args) async {
   final arbFile = createFileRef(result[_sourceArb] as String);
   final apiKeyFile = createFileRef(result[_apiKey] as String);
   final outputFileName = result[_outputFileName] as String;
-  final languageCodes = (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
+  final languageCodes =
+      (result[_languageCodes] as List<String>).map((e) => e.trim()).toList();
   var outputDirectory = result[_outputDirectory] as String?;
 
   final apiKey = apiKeyFile.readAsStringSync();
   final src = arbFile.readAsStringSync();
   final arbDocument = ArbDocument.decode(src);
 
-  outputDirectory ??= arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
+  outputDirectory ??=
+      arbFile.path.substring(0, arbFile.path.lastIndexOf('/') + 1);
 
   if (languageCodes.toSet().length != languageCodes.length) {
     _setBrightRed();
@@ -146,7 +149,8 @@ void createArbFile({
 
   var translateResults = await Future.wait(futuresList);
 
-  translateResults = insertManualTranslations(translateResults, actionLists, languageCode, arbDocument);
+  translateResults = insertManualTranslations(
+      translateResults, actionLists, languageCode, arbDocument);
 
   // This is reversed so that end operations replace contents in string
   // before the beginning ones.
@@ -186,7 +190,10 @@ void createArbFile({
 }
 
 List<List<String>> insertManualTranslations(
-    List<List<String>> translationsLists, List<List<Action>> actionLists, String languageCode, ArbDocument arbDocument) {
+    List<List<String>> translationsLists,
+    List<List<Action>> actionLists,
+    String languageCode,
+    ArbDocument arbDocument) {
   List<List<String>> updatedTranslationsLists = [];
 
   for (var i = 0; i < translationsLists.length; i++) {
@@ -226,7 +233,9 @@ Future<List<String>> _translateNow({
 
   parameters['q'] = translateList;
 
-  final url = Uri.parse('https://translation.googleapis.com/language/translate/v2').resolveUri(Uri(queryParameters: parameters));
+  final url =
+      Uri.parse('https://translation.googleapis.com/language/translate/v2')
+          .resolveUri(Uri(queryParameters: parameters));
 
   final data = await http.get(url);
 

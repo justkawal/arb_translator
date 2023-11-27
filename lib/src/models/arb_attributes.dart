@@ -26,8 +26,13 @@ class ArbAttributes {
 
     return ArbAttributes(
       description: json['description'] as String?,
-      resourceType: resourceType == null ? null : enumFromString(ResourceType.values, resourceType),
-      xTranslations: json['x-translations'] == null ? null : Map<String, dynamic>.from(json['x-translations'] as Map<String, dynamic>),
+      resourceType: resourceType == null
+          ? null
+          : enumFromString(ResourceType.values, resourceType),
+      xTranslations: json['x-translations'] == null
+          ? null
+          : Map<String, dynamic>.from(
+              json['x-translations'] as Map<String, dynamic>),
       placeholders: json['placeholders'] == null
           ? null
           : Map<String, Map<String, dynamic>>.from(
