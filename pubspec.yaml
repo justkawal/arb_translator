@@ -1,10 +1,10 @@
 name: arb_translator
 description: A command-line utility which helps to translate arb files with the use of google translations.
-version: 2.0.2
+version: 3.0.0
 homepage: https://github.com/justkawal/arb_translator.git
 
 environment:
-  sdk: ">=2.16.1 <4.0.0"
+  sdk: ">=3.0.1 <4.0.0"
 
 dependencies:
   args: ^2.4.0
