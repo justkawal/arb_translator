@@ -1,30 +1,29 @@
-name: Dart Release
-
+name: Build and Test
+ 
 on:
-  push:
-    branches: ["master"]
   pull_request:
-    branches: ["master"]
+    paths-ignore:
+      - "**.md"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v3.5.0
         with:
-          distribution: "zulu"
-          java-version: "12.x"
-      
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.3.9"
-          channel: "stable"
+          fetch-depth: 2
 
-      - name: Get dependencies
-        run: flutter packages get
+      # Note: This workflow uses the latest stable version of the Dart SDK.
+      # You can specify other versions if desired, see documentation here:
+      # https://github.com/dart-lang/setup-dart/blob/main/README.md
+      # - uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
 
       - name: Install dependencies
         run: dart pub get
@@ -35,10 +34,23 @@ jobs:
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
       - name: Analyze project source
-        run: dart analyze
+        run: dart analyze --fatal-infos
+      
+      # Run tests
+      - name: Run Tests
+        run: dart test --fail-fast
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: dart test
+      # Activate coverage
+      #- name: Activate Coverage
+      #  run: dart pub global activate coverage
+
+      # Run coverage
+      #- name: Run Coverage
+      #  run: dart pub global run coverage:test_with_coverage
+      
+      # Code coverage
+      #- uses: codecov/codecov-action@v3
+      #  with:
+      #    token: ${{ secrets.CODECOV_TOKEN }}
+      #    directory: ./coverage
+
