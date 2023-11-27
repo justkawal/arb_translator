@@ -209,7 +209,7 @@ List<List<String>> insertManualTranslations(
       if (xTranslations != null && xTranslations[languageCode] != null) {
         updatedTranslations.add(xTranslations[languageCode] as String);
       } else {
-        updatedTranslations.add(translations[j]);
+        updatedTranslations.add(translation);
       }
     }
   }
