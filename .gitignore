@@ -18,3 +18,4 @@ api
 /.idea/modules.xml
 /test.cmd
 /.idea/vcs.xml
+.DS_Store
