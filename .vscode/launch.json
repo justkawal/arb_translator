@@ -12,9 +12,9 @@
                 "--source_arb",
                 "./test/resources/example_one.arb",
                 "--api_key",
-                "./api",
+                "D:/github/ABCx3/dart_secrets/api_key.txt",
                 "--language_codes",
-                "es"
+                "sv,es"
             ],
         }
     ]

@@ -14,7 +14,7 @@ class ArbResource {
 
   final ArbAttributes? attributes;
 
-  List<Token> get tokens => IcuParser().parse(text).value;
+  List<Token> get tokens => IcuParser().parse(text);
 
   const ArbResource._({
     required this.id,

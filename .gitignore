@@ -1,6 +1,7 @@
 # Files and directories created by pub
 .dart_tool/
 .packages
+/pubspec.lock
 
 # Conventional directory for build outputs
 build/
@@ -9,3 +10,12 @@ build/
 doc/api/
 
 api
+/.idea/.gitignore
+/.idea/arb_translator.iml
+/.idea/libraries/Dart_Packages.xml
+/.idea/libraries/Dart_SDK.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/test.cmd
+/.idea/vcs.xml
+.DS_Store

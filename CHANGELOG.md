@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-/## [2.0.0] - 2022-10-28
+## [3.0.0] - 2023-11-26
+- improvements
+
+## [2.0.0] - 2022-10-28
 - replaced deprecated package pedantic with lints. Updated dependencies to latest versions.
 
 ## [1.0.5] - 2022-01-21

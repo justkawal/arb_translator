@@ -8,10 +8,12 @@ class ArbAttributes {
   final ResourceType? resourceType;
 
   final Map<String, Map<String, dynamic>>? placeholders;
+  final Map<String, dynamic>? xTranslations;
 
   const ArbAttributes({
     required this.description,
     required this.placeholders,
+    required this.xTranslations,
     required this.resourceType,
   });
 
@@ -27,6 +29,10 @@ class ArbAttributes {
       resourceType: resourceType == null
           ? null
           : enumFromString(ResourceType.values, resourceType),
+      xTranslations: json['x-translations'] == null
+          ? null
+          : Map<String, dynamic>.from(
+              json['x-translations'] as Map<String, dynamic>),
       placeholders: json['placeholders'] == null
           ? null
           : Map<String, Map<String, dynamic>>.from(
@@ -42,18 +48,20 @@ class ArbAttributes {
     };
   }
 
-  ArbAttributes copyWith({
+  /* ArbAttributes copyWith({
     String? description,
     ResourceType? resourceType,
     Map<String, Map<String, dynamic>>? placeholders,
+    Map<String, dynamic>? xTranslations,
   }) {
     final currentPlaceholders = this.placeholders;
+    final currentXTranslations = this.xTranslations;
 
     return ArbAttributes(
       description: description ?? this.description,
       resourceType: resourceType ?? this.resourceType,
-      placeholders: placeholders ??
-          (currentPlaceholders == null ? null : {...currentPlaceholders}),
+      placeholders: placeholders ?? (currentPlaceholders == null ? null : {...currentPlaceholders}),
+      xTranslations: xTranslations ?? (currentXTranslations == null ? null : {...currentXTranslations}),
     );
-  }
+  } */
 }

@@ -129,18 +129,23 @@ class IcuParser {
 
   // TODO: Tokens can be nested deeper and we'll need to get those too using
   // fold or something
-  Result<List<Token>> parse(String message) {
+  List<Token> parse(String message) {
     final parsed = (placeholderText.token() |
             justText.token() |
             pluralOrGenderOrSelectContents)
-        .parse(message)
-        .map(
-      (element) {
-        return element is List ? List<Token>.from(element) : [element as Token];
-      },
-    );
+        .parse(message);
 
-    return parsed;
+    if (parsed.isFailure) {
+      print('Failed to parse: $message');
+      print(parsed.message);
+      throw Exception('parsing failed');
+    } else {
+      final parsedValue = parsed.value;
+      print('Parsed: $parsedValue');
+      return parsedValue is List
+          ? List<Token>.from(parsedValue)
+          : [parsedValue as Token];
+    }
   }
 
   IcuParser() {

@@ -68,6 +68,19 @@ options | description
 flutter packages pub run arb_translator:translate --source_arb path/to/source_en.arb --api_key path/to/api_key_file --language_codes hi,en,zh --output_directory /path/to/my/custom/output_directory/
 ```
 
+### Custom Translations
+If a translation by Google is incorrect or less suitable, you can override it by adding an 'x-translations' attribute and then specify your own translation for any specified language code. For instance, overriding the Swedish translation of the word "Continue" to "Fortsätt" would be done like this:
+
+```json
+"continue_": "Continue",
+"@continue_": {
+  "description": "custom translations",
+  "x-translations": {
+    "sv": "Fortsätt"
+  }
+}
+```
+
 ### Don't like the name ```arb_translator_..blah..blah..blah.arb``` ??
 * use ```--output_file_name``` with the single file name so that the output file name will be changed.
 * from the below code the output file will be of the name justkawal_{language code}.arb

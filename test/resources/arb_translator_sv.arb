@@ -1,7 +1,7 @@
 {
-  "@@locale": "es",
+  "@@locale": "sv",
   "appName": "Demo app",
-  "pageHomeTitle": "Bienvenido {firstName}",
+  "pageHomeTitle": "Välkommen {firstName}",
   "@pageHomeTitle": {
     "description": "Welcome message on the Home screen",
     "placeholders": {
@@ -10,28 +10,28 @@
       }
     }
   },
-  "welcome": "Hola",
+  "welcome": "Haj på daj!",
   "@welcome": {
     "description": "Greeting with manual translation"
   },
-  "commonVehicleType": "{vehicleType, select, sedan{Después} cabriolet{descapotable de techo sólido} truck{camión de 16 ruedas} other{Otro}}",
+  "commonVehicleType": "{vehicleType, select, sedan{Sedan} cabriolet{Cabriolet i massiv tak} truck{16 hjul lastbil} other{Övrig}}",
   "@commonVehicleType": {
     "description": "Vehicle type",
     "placeholders": {
       "vehicleType": {}
     }
   },
-  "pageLoginUsername": "Su nombre de usuario",
-  "pageLoginPassword": "Tu contraseña",
+  "pageLoginUsername": "Ditt användarnamn",
+  "pageLoginPassword": "Ditt lösenord",
   "@pageLoginPassword": {},
-  "pageHomeInboxCount": "{count, plural, zero{No tienes mensajes nuevos} one{Tienes 1 mensaje nuevo} other{Tienes {count} mensajes nuevos}}",
+  "pageHomeInboxCount": "{count, plural, zero{Du har inga nya meddelanden} one{Du har 1 nytt meddelande} other{Du har {count} nya meddelanden}}",
   "@pageHomeInboxCount": {
     "description": "New messages count on the Home screen",
     "placeholders": {
       "count": {}
     }
   },
-  "pageHomeBirthday": "{sex, select, male{Su cumpleaños} female{Su cumpleaños} other{su cumpleaños}}",
+  "pageHomeBirthday": "{sex, select, male{Hans födelsedag} female{Hennes födelsedag} other{Deras födelsedag}}",
   "@pageHomeBirthday": {
     "description": "Birthday message on the Home screen",
     "placeholders": {
