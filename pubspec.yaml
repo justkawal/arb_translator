@@ -11,7 +11,7 @@ dependencies:
   collection: ^1.18.0
   console: ^4.1.0
   html_unescape: ^2.0.0
-  http: 1.2.0
+  http: ^1.2.1
   path: ^1.9.0
   petitparser: ^6.0.2
   yaml: ^3.1.2
